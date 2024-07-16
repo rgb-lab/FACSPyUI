@@ -24,7 +24,7 @@ class ChangeHandler(FileSystemEventHandler):
         self.on_modified(event)
 
 if __name__ == "__main__":
-    command = [sys.executable, "app.py"]
+    command = [sys.executable, "FACSPyUI.py"]
     
     # Create an event handler and observer
     event_handler = ChangeHandler(command)
