@@ -37,5 +37,10 @@ In order to build it yourself, navigate to the directory and run:
 >>> pyinstaller app.spec
 ```
 
+If that doesnt work due to a command-not-found, reinstall pyinstaller with:
+```shell
+>>> pip install --upgrade pyinstaller
+```
+
 If you want to use pre-existing builds, choose one of the following links.
 
