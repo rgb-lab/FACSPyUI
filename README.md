@@ -1,2 +1,40 @@
 # FACSPyUI
 PyQT Interface for FACSPy
+
+## Installation
+Currently, FACSPy and FACSPyUI are in beta phase. A pypi distribution will be available once the beta phase is completed.
+
+To install, first clone this repository to your local drive via your terminal:
+
+```shell
+>>> git clone https://github.com/TarikExner/FACSPyUI.git
+```
+
+It is recommended to choose conda as your package manager. Conda can be obtained, e.g., by installing the Miniconda distribution, for detailed instructions, please refer to the respective documentation.
+
+With conda installed, open your terminal and create a new environment by executing the following commands.
+```shell
+>>> conda create -n facspy python=3.10
+>>> conda activate facspy
+```
+
+Navigate to the folder where you cloned the repository in and run:
+```shell
+>>> pip install .
+```
+
+This installs FACSPy, the UI and all dependencies.
+
+In order to run the app, navigate to the folder and type
+```shell
+>>> python FACSPyUI.py
+```
+
+
+In order to build it yourself, navigate to the directory and run:
+```shell
+>>> pyinstaller app.spec
+```
+
+If you want to use pre-existing builds, choose one of the following links.
+
