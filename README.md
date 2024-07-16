@@ -14,7 +14,7 @@ It is recommended to choose conda as your package manager. Conda can be obtained
 
 With conda installed, open your terminal and create a new environment by executing the following commands.
 ```shell
->>> conda create -n facspy python=3.10
+>>> conda create -n facspyui python=3.10
 >>> conda activate facspy
 ```
 
@@ -25,10 +25,11 @@ Navigate to the folder where you cloned the repository in and run:
 
 This installs FACSPy, the UI and all dependencies.
 
-In order to run the app, navigate to the folder and type
+In order to run the app, navigate to the folder FACSPyUI and type
 ```shell
 >>> python FACSPyUI.py
 ```
+Note that currently you have to be in the same directory.
 
 
 In order to build it yourself, navigate to the directory and run:
