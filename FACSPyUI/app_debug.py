@@ -24,8 +24,7 @@ class ChangeHandler(FileSystemEventHandler):
         self.on_modified(event)
 
 if __name__ == "__main__":
-    # Command to run the PyQt5 application
-    command = [sys.executable, "app.py"]  # Adjust this to your script name
+    command = [sys.executable, "app.py"]
     
     # Create an event handler and observer
     event_handler = ChangeHandler(command)

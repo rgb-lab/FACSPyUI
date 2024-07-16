@@ -51,14 +51,14 @@ def run_imports(splash):
 
 def main():
     app = QApplication(sys.argv)
-
+    if hasattr(sys, "_MEIPASS"):
     # Create and display the splash screen
-    # print("Creating pixmap")
-    # pixmap = QPixmap(os.path.join(sys._MEIPASS, "_icons/facspyqt_logo.png"))
-    # splash = SplashScreen(pixmap)
-    # splash.show()
-
-    # run_imports(splash)
+        pixmap = QPixmap(os.path.join(sys._MEIPASS, "_icons/facspyqt_logo.png"))
+    else:
+        pixmap = QPixmap("./_icons/facspyqt_logo.png")
+    splash = SplashScreen(pixmap)
+    splash.show()
+    run_imports(splash)
 
     import FACSPy as fp
     from _main_window import ToolBar
@@ -345,7 +345,7 @@ def main():
     window = FACSPyBrowser(light_stylesheet, dark_stylesheet)
     window.setStyleSheet(light_stylesheet)
     window.show()
-    # splash.finish(window)
+    splash.finish(window)
     sys.exit(app.exec_())
 
 if __name__ == "__main__":
