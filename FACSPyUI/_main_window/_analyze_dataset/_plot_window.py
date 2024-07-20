@@ -1,5 +1,5 @@
 import os
-from PyQt5.QtCore import pyqtSlot, Qt, QPoint
+from PyQt5.QtCore import pyqtSlot, Qt, QPoint, QTimer
 from PyQt5.QtWidgets import (QFileDialog, QDialog, QVBoxLayout, QLabel, QLineEdit,
                              QPushButton, QComboBox, QHBoxLayout, QDialogButtonBox,
                              QWidget, QSizeGrip, QErrorMessage)
@@ -16,9 +16,8 @@ from matplotlib import rcParams
 
 import plotly.express as px
 import plotly.graph_objs as go
-import sys
-import subprocess
-from PyQt5.QtGui import QPixmap
+import plotly.io as pio
+
 
 COLORMAPS = {
     "tab10": [
@@ -190,6 +189,26 @@ class PlotWindowFunctionGeneric(QWidget):
         self.grip.setFixedSize(20, 20)
         self.grip.setStyleSheet("background-color: transparent;")
         self.grip.show()
+
+    def _show_matplotlib(self, fig):
+        # Add the canvas to the layout
+        self.current_plot_widget = FigureCanvas(fig)
+        self.layout.addWidget(self.current_plot_widget)
+
+    def _show_plotly(self, fig):
+        # Convert Plotly figure to HTML
+        html = pio.to_html(fig, full_html=True, include_plotlyjs='cdn')  # Use full_html=True for proper rendering
+
+        # Create a QWebEngineView
+        plotly_widget = QWebEngineView()
+
+        # Set HTML asynchronously with a timer to ensure proper rendering
+        QTimer.singleShot(10, lambda: plotly_widget.setHtml(html))
+
+        # Add the QWebEngineView to the layout
+        self.current_plot_widget = plotly_widget
+        self.layout.addWidget(self.current_plot_widget)
+
 
 
     @pyqtSlot(dict)

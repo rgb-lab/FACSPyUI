@@ -3,8 +3,6 @@ import FACSPy as fp
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QFormLayout
 
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-
 from . import PlotWindowFunctionGeneric, BaseConfigPanel
 
 
@@ -32,21 +30,16 @@ class ConfigPanelSampleDistance(BaseConfigPanel):
 
         self.add_continous_cmaps_input()
 
-        # Add layout parameters section
         self.add_layout_parameters()
 
-        # Add font size parameters section
         self.add_fontsize_parameters()
 
-        # Add stretch to keep layout parameters aligned
         self.scroll_layout.addStretch()
 
-        # Buttons
         self.add_buttons()
 
         self.setLayout(self.main_layout)
 
-        # Populate dropdowns
         self.populate_dropdowns()
 
 
@@ -60,9 +53,6 @@ class PlotWindowSampleDistance(PlotWindowFunctionGeneric):
         self.no_tight_layout_upon_resizing = True
 
     def generate_matplotlib(self, plot_config):
-        """
-        Generates a plot using fp.pl.marker_correlation function.
-        """
         dataset = self.retrieve_dataset()
         xticklabel_fontsize = plot_config.get("xticklabel_fontsize")
         if not xticklabel_fontsize:
@@ -70,7 +60,6 @@ class PlotWindowSampleDistance(PlotWindowFunctionGeneric):
         yticklabel_fontsize = plot_config.get("yticklabel_fontsize")
         if not yticklabel_fontsize:
             plot_config["yticklabel_fontsize"] = 12
-        # Generate the figure using your custom function
         try:
             fig = fp.pl.sample_distance(
                 dataset,
@@ -87,12 +76,9 @@ class PlotWindowSampleDistance(PlotWindowFunctionGeneric):
             ax = fig.ax_heatmap
             self._apply_layout_parameters_matplotlib(ax, plot_config)
 
-            # Add the canvas to the layout
             fig.fig.tight_layout()
 
-            self.current_plot_widget = FigureCanvas(fig.fig)
-            self.layout.addWidget(self.current_plot_widget)
-            self.current_plot_widget.figure.tight_layout()
+            self._show_matplotlib(fig)
 
         except Exception as e:
-            self.show_error_dialog(f"Error generating Matplotlib plot with fp.pl.marker_correlation: {e}")
+            self.show_error_dialog(f"Error generating Matplotlib plot: {e}")

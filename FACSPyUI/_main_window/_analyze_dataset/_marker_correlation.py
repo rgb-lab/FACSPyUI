@@ -3,8 +3,6 @@ import FACSPy as fp
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QFormLayout
 
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-
 from . import PlotWindowFunctionGeneric, BaseConfigPanel
 
 
@@ -12,7 +10,6 @@ class ConfigPanelMarkerCorrelation(BaseConfigPanel):
     def __init__(self, main_window):
         super().__init__(main_window)
 
-        # Data parameters section
         self.add_data_parameters_label()
 
         self.form_layout = QFormLayout()
@@ -32,22 +29,16 @@ class ConfigPanelMarkerCorrelation(BaseConfigPanel):
 
         self.add_continous_cmaps_input()
 
-
-        # Add layout parameters section
         self.add_layout_parameters()
 
-        # Add font size parameters section
         self.add_fontsize_parameters()
 
-        # Add stretch to keep layout parameters aligned
         self.scroll_layout.addStretch()
 
-        # Buttons
         self.add_buttons()
 
         self.setLayout(self.main_layout)
 
-        # Populate dropdowns
         self.populate_dropdowns()
 
 
@@ -89,8 +80,7 @@ class PlotWindowMarkerCorrelation(PlotWindowFunctionGeneric):
             ax = fig.ax_heatmap
             self._apply_layout_parameters_matplotlib(ax, plot_config)
 
-            self.current_plot_widget = FigureCanvas(fig.fig)
-            self.layout.addWidget(self.current_plot_widget)
+            self._show_matplotlib(fig)
 
         except Exception as e:
             self.show_error_dialog(f"Error generating Matplotlib plot with fp.pl.marker_correlation: {e}")

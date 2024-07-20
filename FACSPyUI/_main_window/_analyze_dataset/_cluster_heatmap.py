@@ -35,22 +35,16 @@ class ConfigPanelClusterHeatmap(BaseConfigPanel):
 
         self.add_continous_cmaps_input()
 
-
-        # Add layout parameters section
         self.add_layout_parameters()
 
-        # Add font size parameters section
         self.add_fontsize_parameters()
 
-        # Add stretch to keep layout parameters aligned
         self.scroll_layout.addStretch()
 
-        # Buttons
         self.add_buttons()
 
         self.setLayout(self.main_layout)
 
-        # Populate dropdowns
         self.populate_dropdowns()
 
 
@@ -94,8 +88,8 @@ class PlotWindowClusterHeatmap(PlotWindowFunctionGeneric):
             ax = fig.ax_heatmap
             self._apply_layout_parameters_matplotlib(ax, plot_config)
 
-            self.current_plot_widget = FigureCanvas(fig.fig)
-            self.layout.addWidget(self.current_plot_widget)
+
+            self._show_matplotlib(fig)
 
         except Exception as e:
             self.show_error_dialog(f"Error generating Matplotlib plot: {e}")
