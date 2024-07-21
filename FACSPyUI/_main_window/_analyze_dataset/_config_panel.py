@@ -12,13 +12,16 @@ CATEGORICAL_CMAPS = [
 ]
 
 CONTINUOUS_CMAPS = [
+    "RdYlBu_r", "RdYlBu",
+    "inferno_r", "inferno",
+    "magma_r", "magma", 
+    "plasma_r", "plasma", 
+    "viridis_r", "viridis", 
+    "cividis_r", "cividis", 
     "jet",
-    "inferno", "inferno_r",
-    "magma", "magma_r",
-    "plasma", "plasma_r",
-    "viridis", "viridis_r",
-    "cividis", "cividis_r",
-    "RdYlBu", "RdYlBu_r"
+    "Reds", "Reds_r",
+    "Blues", "Blues_r",
+    "Greens", "Greens_r"
 ]
 
 
@@ -27,7 +30,7 @@ class ConfigPanel(QWidget):
 
     def __init__(self, main_window):
         super().__init__()
-        self.main_window = main_window  # Store reference to main window
+        self.main_window = main_window
         
         # we instantiate it as None
         # and later reference it with the correct
@@ -401,6 +404,14 @@ class BaseConfigPanel(QWidget):
                 self.ychannel_dropdown.clear()
                 self.ychannel_dropdown.addItems(dataset.var_names)
 
+            if hasattr(self, 'xscale_dropdown'):
+                self.xscale_dropdown.clear()
+                self.xscale_dropdown.addItems(["biex", "linear", "log"])
+
+            if hasattr(self, 'yscale_dropdown'):
+                self.yscale_dropdown.clear()
+                self.yscale_dropdown.addItems(["biex", "linear", "log"])
+
             if hasattr(self, 'cluster_key_dropdown'):
                 self.cluster_key_dropdown.clear()
                 cluster_columns = [
@@ -560,11 +571,11 @@ class BaseConfigPanel(QWidget):
             plot_config["vmax"] = self.vmax_input.text()
 
         # X scale parameters
-        if hasattr(self, 'xscale_input'):
-            plot_config["x_scale"] = self.xscale_input.text()
+        if hasattr(self, 'xscale_dropdown'):
+            plot_config["x_scale"] = self.xscale_dropdown.currentText()
         # Y scale parameters
-        if hasattr(self, 'yscale_input'):
-            plot_config["y_scale"] = self.yscale_input.text()
+        if hasattr(self, 'yscale_dropdown'):
+            plot_config["y_scale"] = self.yscale_dropdown.currentText()
 
         # Aspect parameters
         if hasattr(self, 'plot_height_input'):
@@ -957,10 +968,9 @@ class BaseConfigPanel(QWidget):
         self.xscale_parameters_group.setVisible(False)
         self.scroll_layout.addWidget(self.xscale_parameters_group)
 
-        # Dot size
         self.xscale_label = QLabel("Scale:")
-        self.xscale_input = QLineEdit()
-        self.xscale_parameters_layout.addRow(self.xscale_label, self.xscale_input)
+        self.xscale_dropdown = QComboBox()
+        self.xscale_parameters_layout.addRow(self.xscale_label, self.xscale_dropdown)
 
     def add_yscale_parameters(self):
         """
@@ -978,8 +988,8 @@ class BaseConfigPanel(QWidget):
 
         # Dot size
         self.yscale_label = QLabel("Scale:")
-        self.yscale_input = QLineEdit()
-        self.yscale_parameters_layout.addRow(self.yscale_label, self.yscale_input)
+        self.yscale_dropdown = QComboBox()
+        self.yscale_parameters_layout.addRow(self.yscale_label, self.yscale_dropdown)
 
     def add_colorscale_parameters(self):
         """
@@ -1079,8 +1089,10 @@ class BaseConfigPanel(QWidget):
         """
         Trigger the save data functionality in the PlotWindow.
         """
+
+        plot_config = self.generate_plot_config()
         if hasattr(self.main_window.plot_window.current_plot_widget, 'save_raw_data'):
-            self.main_window.plot_window.current_plot_widget.save_raw_data()
+            self.main_window.plot_window.current_plot_widget.save_raw_data(plot_config)
         else:
             self.show_error_dialog("Saving of the raw data was not successful.")
 

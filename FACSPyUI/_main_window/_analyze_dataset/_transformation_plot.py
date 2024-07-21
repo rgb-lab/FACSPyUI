@@ -40,22 +40,29 @@ class PlotWindowTransformationPlot(PlotWindowFunctionGeneric):
 
     def __init__(self, main_window, parent=None):
         super().__init__(parent)
-        self.main_window = main_window  # Store reference to the main window
+        self.main_window = main_window
+        self._plot_func = fp.pl.transformation_plot
+
+    def _instantiate_parameters(self,
+                                plot_config,
+                                dataset,
+                                ax = None):
+        self._raw_config = {
+                "adata": dataset,
+                "gate": plot_config.get("gate"),
+                "sample_identifier": plot_config.get("sample_identifier"),
+                "marker": plot_config.get("marker"),
+                "scatter": plot_config.get("scatter"),
+                "show": False,
+                "return_fig": True,
+        }
 
     def generate_matplotlib(self, plot_config):
         dataset = self.retrieve_dataset()
 
         try:
-            fig = fp.pl.transformation_plot(
-                dataset,
-                gate=plot_config.get("gate"),
-                sample_identifier=plot_config.get("sample_identifier"),
-                marker=plot_config.get("marker"),
-                scatter=plot_config.get("scatter"),
-                # sample_size=int(plot_config.get("sample_size")),
-                show=False,
-                return_fig=True,
-            )
+            self._instantiate_parameters(plot_config, dataset)
+            fig = self._plot_func(**self._raw_config)
             for _ax in fig.axes[:2]:
                 self._apply_dot_parameters_matplotlib(_ax, plot_config)
 

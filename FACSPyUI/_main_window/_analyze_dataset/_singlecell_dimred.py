@@ -51,51 +51,60 @@ class PlotWindowSinglecellDimred(PlotWindowFunctionGeneric):
 
     def __init__(self, main_window, parent=None):
         super().__init__(parent)
-        self.main_window = main_window  # Store reference to the main window
+        self.main_window = main_window
+        self._plot_func = None
+
+    def _instantiate_parameters(self,
+                                plot_config,
+                                dataset,
+                                ax = None):
+        reduction = plot_config.get("reduction")
+        if reduction == "PCA":
+            plot_func = fp.pl.pca
+        elif reduction == "DMAP":
+            plot_func = fp.pl.diffmap
+        elif reduction == "TSNE":
+            plot_func = fp.pl.tsne
+        else:
+            assert reduction == "UMAP"
+            plot_func = fp.pl.umap
+
+        self._plot_func = plot_func
+
+        self._raw_config = {
+            "adata": dataset,
+            "gate": plot_config.get("gate"),
+            "layer": plot_config.get("layer"),
+            "color": plot_config.get("color"),
+            "cmap": plot_config.get("cmap"),
+            "ax": ax,
+            "show": False,
+        }
+        vmin = plot_config.get("vmin")
+        vmax = plot_config.get("vmax")
+        color_scale = plot_config.get("color_scale")
+        scale_kwargs = {}
+        if vmin:
+            scale_kwargs["vmin"] = float(vmin)
+        if vmax:
+            scale_kwargs["vmax"] = float(vmax)
+        if color_scale:
+            scale_kwargs["color_scale"] = color_scale
+
+        self._scale_kwargs = scale_kwargs
+
 
     def generate_matplotlib(self, plot_config):
         dataset = self.retrieve_dataset()
 
         try:
-            reduction = plot_config.get("reduction")
-            if reduction == "PCA":
-                plot_func = fp.pl.pca
-            elif reduction == "DMAP":
-                plot_func = fp.pl.diffmap
-            elif reduction == "TSNE":
-                plot_func = fp.pl.tsne
-            else:
-                assert reduction == "UMAP"
-                plot_func = fp.pl.umap
-
-
             fig, ax = plt.subplots(ncols = 1, nrows = 1)
-            
-            vmin = plot_config.get("vmin")
-            vmax = plot_config.get("vmax")
-            color_scale = plot_config.get("color_scale")
-            scale_kwargs = {}
-            if vmin:
-                scale_kwargs["vmin"] = float(vmin)
-            if vmax:
-                scale_kwargs["vmax"] = float(vmax)
-            if color_scale:
-                scale_kwargs["color_scale"] = color_scale
-
-            ax = plot_func(
-                dataset,
-                gate=plot_config.get("gate"),
-                layer=plot_config.get("layer"),
-                color=plot_config.get("color"),
-                cmap=plot_config.get("cmap"),
-                ax = ax,
-                show=False,
-                **scale_kwargs
-            )
+            self._instantiate_parameters(plot_config, dataset, ax)
+            assert self._plot_func is not None, "no plot func defined"
+            ax = self._plot_func(**self._raw_config, **self._scale_kwargs)
             self._apply_layout_parameters_matplotlib(ax, plot_config)
             self._apply_dot_parameters_matplotlib(ax, plot_config)
 
             self._show_matplotlib(fig)
         except Exception as e:
             self.show_error_dialog(f"Error generating Matplotlib plot: {e}")
-

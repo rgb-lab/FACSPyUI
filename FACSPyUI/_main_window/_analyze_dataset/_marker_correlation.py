@@ -48,39 +48,47 @@ class PlotWindowMarkerCorrelation(PlotWindowFunctionGeneric):
 
     def __init__(self, main_window, parent=None):
         super().__init__(parent)
-        self.main_window = main_window  # Store reference to the main window
+        self.main_window = main_window
         self.no_tight_layout_upon_resizing = True
+        self._plot_func = fp.pl.marker_correlation
+
+    def _instantiate_parameters(self,
+                                plot_config,
+                                dataset,
+                                ax = None):
+        self._raw_config = {
+            "adata": dataset,
+            "gate": plot_config.get("gate"),
+            "layer": plot_config.get("layer"),
+            "include_technical_channels": plot_config.get("include_technical_channels") == "True",
+            "exclude": plot_config.get("exclude"),
+            "scaling": plot_config.get("scaling"),
+            "data_metric": plot_config.get("data_metric"),
+            "corr_method": plot_config.get("corr_method"),
+            "cmap": plot_config.get("cmap"),
+            "show": False,
+            "return_fig": True,
+        }
+
+        if self._raw_config["include_technical_channels"] is True:
+            self._raw_config["include_technical_channels"] = False
 
     def generate_matplotlib(self, plot_config):
-        """
-        Generates a plot using fp.pl.marker_correlation function.
-        """
         dataset = self.retrieve_dataset()
-        xticklabel_fontsize = plot_config.get("xticklabel_fontsize")
-        if not xticklabel_fontsize:
-            plot_config["xticklabel_fontsize"] = 12
-        yticklabel_fontsize = plot_config.get("yticklabel_fontsize")
-        if not yticklabel_fontsize:
-            plot_config["yticklabel_fontsize"] = 12
-        # Generate the figure using your custom function
         try:
-            fig = fp.pl.marker_correlation(
-                dataset,
-                gate=plot_config.get("gate"),
-                layer=plot_config.get("layer"),
-                include_technical_channels = True,
-                exclude=plot_config.get("exclude"),
-                scaling=plot_config.get("scaling"),
-                data_metric=plot_config.get("data_metric"),
-                corr_method=plot_config.get("corr_method"),
-                cmap = plot_config.get("cmap"),
-                show=False,
-                return_fig=True,
-            )
+            xticklabel_fontsize = plot_config.get("xticklabel_fontsize")
+            if not xticklabel_fontsize:
+                plot_config["xticklabel_fontsize"] = 12
+            yticklabel_fontsize = plot_config.get("yticklabel_fontsize")
+            if not yticklabel_fontsize:
+                plot_config["yticklabel_fontsize"] = 12
+
+            self._instantiate_parameters(plot_config, dataset)
+            fig = self._plot_func(**self._raw_config)
             ax = fig.ax_heatmap
             self._apply_layout_parameters_matplotlib(ax, plot_config)
 
             self._show_matplotlib(fig)
 
         except Exception as e:
-            self.show_error_dialog(f"Error generating Matplotlib plot with fp.pl.marker_correlation: {e}")
+            self.show_error_dialog(f"Error generating Matplotlib plot: {e}")

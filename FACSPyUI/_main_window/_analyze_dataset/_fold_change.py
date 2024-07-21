@@ -47,30 +47,37 @@ class PlotWindowFoldChange(PlotWindowFunctionGeneric):
 
     def __init__(self, main_window, parent=None):
         super().__init__(parent)
-        self.main_window = main_window  # Store reference to the main window
+        self.main_window = main_window
+        self._plot_func = fp.pl.fold_change
+
+    def _instantiate_parameters(self,
+                                plot_config,
+                                dataset,
+                                ax = None):
+        self._raw_config = {
+            "adata": dataset,
+            "gate": plot_config.get("gate"),
+            "layer": plot_config.get("layer"),
+            "groupby": plot_config.get("groupby"),
+            "group1": plot_config.get("group1"),
+            "group2": plot_config.get("group2"),
+            "cmap": plot_config.get("cmap"),
+            "data_metric": plot_config.get("data_metric"),
+            "ax": ax,
+            "show": False
+        }
 
     def generate_matplotlib(self, plot_config):
         dataset = self.retrieve_dataset()
 
         try:
             fig, ax = plt.subplots(ncols = 1, nrows = 1)
-            ax = fp.pl.fold_change(
-                dataset,
-                gate=plot_config.get("gate"),
-                layer=plot_config.get("layer"),
-                groupby=plot_config.get("groupby"),
-                group1=plot_config.get("group1"),
-                group2=plot_config.get("group2"),
-                cmap = plot_config.get("cmap"),
-                data_metric=plot_config.get("data_metric"),
-                ax = ax,
-                show=False
-            )
+            self._instantiate_parameters(plot_config, dataset, ax)
+            ax = self._plot_func(**self._raw_config)
             self._apply_layout_parameters_matplotlib(ax, plot_config)
             self._apply_dot_parameters_matplotlib(ax, plot_config)
-
 
             self._show_matplotlib(fig)
 
         except Exception as e:
-            self.show_error_dialog(f"Error generating Matplotlib plot with fp.pl.mfi: {e}")
+            self.show_error_dialog(f"Error generating Matplotlib plot: {e}")

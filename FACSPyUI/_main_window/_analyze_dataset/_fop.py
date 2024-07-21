@@ -47,34 +47,44 @@ class PlotWindowFOP(PlotWindowFunctionGeneric):
 
     def __init__(self, main_window, parent=None):
         super().__init__(parent)
-        self.main_window = main_window  # Store reference to the main window
+        self.main_window = main_window
+        self._plot_func = fp.pl.fop
+
+    def _instantiate_parameters(self,
+                                plot_config,
+                                dataset,
+                                ax = None):
+        self._raw_config = {
+            "adata": dataset,
+            "gate": plot_config.get("gate"),
+            "layer": plot_config.get("layer"),
+            "marker": plot_config.get("marker"),
+            "groupby": plot_config.get("groupby"),
+            "splitby": plot_config.get("splitby"),
+            "stat_test": plot_config.get("stat_test"),
+            "cmap": plot_config.get("cmap"),
+            "ax": ax,
+            "show": False
+        }
+        if self._raw_config.get("splitby") == self._raw_config.get("groupby"):
+            self._raw_config["splitby"] = None
+        if self._raw_config.get("stat_test") == "None":
+            self._raw_config["stat_test"] = None
 
     def generate_plotly(self, plot_config):
-        """
-        Generates a scatter plot using plotly with random data and displays it in a QWebEngineView.
-        """
         dataset = self.retrieve_dataset()
 
         try:
-            splitby = plot_config.get("splitby")
-            groupby = plot_config.get("groupby")
-            marker = plot_config.get("marker")
-
-            data = fp.pl.fop(
-                dataset,
-                marker=marker,
-                gate=plot_config.get("gate"),
-                layer=plot_config.get("layer"),
-                groupby=groupby,
-                splitby=splitby if splitby != groupby else None,
-                return_dataframe = True
-            )
+            data = self.get_raw_data(plot_config)
+            groupby = self._raw_config.get("groupby")
+            splitby = self._raw_config.get("splitby")
+            marker = self._raw_config.get("marker")
 
             fig = self.render_stripboxplot_plotly(data = data,
                                                   x = groupby,
                                                   y = marker,
                                                   color = splitby,
-                                                  hover_data = {col: True for col in dataset.obs.columns},
+                                                  hover_data = {col: True for col in dataset.uns["metadata"].get_factors()},
                                                   color_discrete_sequence = COLORMAPS[plot_config.get("cmap")])
 
             self._apply_layout_parameters_plotly(fig, plot_config)
@@ -89,25 +99,9 @@ class PlotWindowFOP(PlotWindowFunctionGeneric):
         dataset = self.retrieve_dataset()
 
         try:
-            splitby = plot_config.get("splitby")
-            groupby = plot_config.get("groupby")
-            stat_test = plot_config.get("stat_test")
-
-            if stat_test == "None":
-                stat_test = None
             fig, ax = plt.subplots(ncols = 1, nrows = 1)
-            ax = fp.pl.fop(
-                dataset,
-                gate=plot_config.get("gate"),
-                layer=plot_config.get("layer"),
-                marker=plot_config.get("marker"),
-                groupby=groupby,
-                splitby=splitby if splitby != groupby else None,
-                stat_test = stat_test,
-                cmap = plot_config.get("cmap"),
-                ax = ax,
-                show=False
-            )
+            self._instantiate_parameters(plot_config, dataset, ax)
+            ax = self._plot_func(**self._raw_config)
             self._apply_layout_parameters_matplotlib(ax, plot_config)
             self._apply_dot_parameters_matplotlib(ax, plot_config)
 

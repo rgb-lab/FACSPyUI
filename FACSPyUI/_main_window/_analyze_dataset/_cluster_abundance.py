@@ -40,25 +40,33 @@ class PlotWindowClusterAbundance(PlotWindowFunctionGeneric):
     def __init__(self, main_window, parent=None):
         super().__init__(parent)
         self.main_window = main_window  # Store reference to the main window
+        self._plot_func = fp.pl.cluster_abundance
 
-    def generate_matplotlib(self, plot_config):
-        dataset = self.retrieve_dataset()
+    def _instantiate_parameters(self,
+                                plot_config,
+                                dataset,
+                                ax = None):
+        self._raw_config = {
+            "adata": dataset,
+            "groupby": plot_config.get("groupby"),
+            "cluster_key": plot_config.get("cluster_key"),
+            "ax": ax,
+            "show": False,
+        }
         normalization_kwargs = {}
         normalize = plot_config.get("normalize")
         if normalize:
             normalization_kwargs["normalize"] = normalize == "True"
+        self._normalization_kwargs = normalization_kwargs
+
+    def generate_matplotlib(self, plot_config):
+        dataset = self.retrieve_dataset()
 
         # Generate the figure using your custom function
         try:
             fig, ax = plt.subplots(ncols = 1, nrows = 1)
-            ax = fp.pl.cluster_abundance(
-                dataset,
-                groupby=plot_config.get("groupby"),
-                cluster_key=plot_config.get("cluster_key"),
-                ax = ax,
-                show=False,
-                **normalization_kwargs
-            )
+            self._instantiate_parameters(plot_config, dataset, ax)
+            ax = self._plot_func(**self._raw_config, **self._normalization_kwargs)
             self._apply_layout_parameters_matplotlib(ax, plot_config)
 
             self._show_matplotlib(fig)

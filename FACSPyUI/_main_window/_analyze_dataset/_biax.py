@@ -55,38 +55,45 @@ class PlotWindowBiaxScatter(PlotWindowFunctionGeneric):
     def __init__(self, main_window, parent=None):
         super().__init__(parent)
         self.main_window = main_window  # Store reference to the main window
+        self._plot_func = fp.pl.biax
+
+    def _instantiate_parameters(self,
+                                plot_config: dict,
+                                dataset,
+                                ax = None) -> None:
+        self._raw_config = {
+            "adata": dataset, 
+            "sample_identifier": plot_config.get("sample_identifier"),
+            "gate": plot_config.get("gate"),
+            "layer": plot_config.get("layer"),
+            "x_channel": plot_config.get("x_channel"),
+            "y_channel": plot_config.get("y_channel"),
+            "color": plot_config.get("color"),
+            "cmap": plot_config.get("cmap"),
+            "ax": ax,
+            "show": False,
+            "return_fig": True
+        }
+        scale_kwargs = {}
+        color_scale = plot_config.get("color_scale")
+        x_scale = plot_config.get("x_scale")
+        y_scale = plot_config.get("y_scale")
+        scale_kwargs = {}
+        if color_scale:
+            scale_kwargs["color_scale"] = color_scale
+        if x_scale:
+            scale_kwargs["x_scale"] = x_scale
+        if y_scale:
+            scale_kwargs["y_scale"] = y_scale
+        self._scale_kwargs = scale_kwargs
+
 
     def generate_matplotlib(self, plot_config):
         dataset = self.retrieve_dataset()
-
         try:
             fig, ax = plt.subplots(ncols = 1, nrows = 1)
-            
-            color_scale = plot_config.get("color_scale")
-            x_scale = plot_config.get("x_scale")
-            y_scale = plot_config.get("y_scale")
-            scale_kwargs = {}
-            if color_scale:
-                scale_kwargs["color_scale"] = color_scale
-            if x_scale:
-                scale_kwargs["x_scale"] = x_scale
-            if y_scale:
-                scale_kwargs["y_scale"] = y_scale
-
-            ax = fp.pl.biax(
-                dataset,
-                sample_identifier=plot_config.get("sample_identifier"),
-                gate=plot_config.get("gate"),
-                layer=plot_config.get("layer"),
-                x_channel=plot_config.get("x_channel"),
-                y_channel=plot_config.get("y_channel"),
-                color=plot_config.get("color"),
-                cmap=plot_config.get("cmap"),
-                ax = ax,
-                show=False,
-                return_fig=True,
-                **scale_kwargs
-            )
+            self._instantiate_parameters(plot_config, dataset, ax)
+            ax = self._plot_func(**self._raw_config, **self._scale_kwargs)
             self._apply_layout_parameters_matplotlib(ax, plot_config)
             self._apply_dot_parameters_matplotlib(ax, plot_config)
             

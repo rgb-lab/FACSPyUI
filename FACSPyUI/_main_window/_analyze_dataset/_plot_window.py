@@ -13,6 +13,7 @@ import pandas as pd
 from anndata import AnnData
 
 from matplotlib import rcParams
+from seaborn.matrix import ClusterGrid
 
 import plotly.express as px
 import plotly.graph_objs as go
@@ -39,7 +40,6 @@ COLORMAPS = {
         "rgb(0,255,127)", "rgb(0,127,255)", "rgb(127,0,255)", "rgb(255,0,127)"
     ]
 }
-
 
 class PlotWindow(QWidget):
     def __init__(self, parent=None):
@@ -190,26 +190,38 @@ class PlotWindowFunctionGeneric(QWidget):
         self.grip.setStyleSheet("background-color: transparent;")
         self.grip.show()
 
+    def get_raw_data(self, plot_config):
+        if not hasattr(self, "_raw_config"):
+            dataset = self.retrieve_dataset()
+            self._instantiate_parameters(plot_config, dataset)
+        data_config = self._raw_config.copy()
+        data_config["return_dataframe"] = True
+        return self._plot_func(**data_config)
+
     def _show_matplotlib(self, fig):
-        # Add the canvas to the layout
-        self.current_plot_widget = FigureCanvas(fig)
+        if isinstance(fig, ClusterGrid):
+            self.current_plot_widget = FigureCanvas(fig.fig)
+        else:
+            self.current_plot_widget = FigureCanvas(fig)
         self.layout.addWidget(self.current_plot_widget)
 
     def _show_plotly(self, fig):
+        print("received figure")
         # Convert Plotly figure to HTML
         html = pio.to_html(fig, full_html=True, include_plotlyjs='cdn')  # Use full_html=True for proper rendering
+        print("converted to html")
 
         # Create a QWebEngineView
         plotly_widget = QWebEngineView()
 
         # Set HTML asynchronously with a timer to ensure proper rendering
         QTimer.singleShot(10, lambda: plotly_widget.setHtml(html))
+        print("Set html")
 
         # Add the QWebEngineView to the layout
         self.current_plot_widget = plotly_widget
+        print("set current plot widget")
         self.layout.addWidget(self.current_plot_widget)
-
-
 
     @pyqtSlot(dict)
     def generate_plot(self, plot_config):
@@ -292,17 +304,16 @@ class PlotWindowFunctionGeneric(QWidget):
 
         return dataset
 
-    def save_plot(self):
+    def save_raw_data(self,
+                      plot_config):
         """
-        Opens a dialog to save the current plot.
+        Opens a dialog to save the current raw_data.
         """
-        # Create a dialog window for file saving
         dialog = QDialog(self)
         dialog.setWindowTitle("Save Plot")
 
         layout = QVBoxLayout(dialog)
 
-        # Directory selection
         dir_label = QLabel("Select directory:")
         dir_input = QLineEdit()
         dir_button = QPushButton("Browse")
@@ -315,13 +326,66 @@ class PlotWindowFunctionGeneric(QWidget):
 
         layout.addLayout(dir_layout)
 
-        # File name input
         file_label = QLabel("File name:")
         file_input = QLineEdit()
         layout.addWidget(file_label)
         layout.addWidget(file_input)
 
-        # File format dropdown
+        button_box = QDialogButtonBox(QDialogButtonBox.Save | QDialogButtonBox.Cancel)
+        button_box.accepted.connect(lambda: self.perform_save_raw_data(
+            plot_config,
+            dir_input.text(),
+            file_input.text(),
+            dialog
+        ))
+        button_box.rejected.connect(dialog.reject)
+
+        layout.addWidget(button_box)
+
+        dialog.setLayout(layout)
+        dialog.exec_()
+
+    def perform_save_raw_data(self, plot_config, directory, filename, dialog):
+        """
+        Saves the current raw data to the specified directory with the
+        given filename, format, and resolution.
+        """
+        if not directory or not filename:
+            self.show_error_dialog("Directory and file name cannot be empty.")
+            return
+        data = self.get_raw_data(plot_config)
+        full_path = os.path.join(directory, filename)
+
+        data.to_csv(full_path)
+
+        dialog.accept()
+
+    def save_plot(self):
+        """
+        Opens a dialog to save the current plot.
+        """
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Save Plot")
+
+        layout = QVBoxLayout(dialog)
+
+        dir_label = QLabel("Select directory:")
+        dir_input = QLineEdit()
+        dir_button = QPushButton("Browse")
+        dir_button.clicked.connect(lambda: self.choose_directory(dir_input))
+
+        dir_layout = QHBoxLayout()
+        dir_layout.addWidget(dir_label)
+        dir_layout.addWidget(dir_input)
+        dir_layout.addWidget(dir_button)
+
+        layout.addLayout(dir_layout)
+
+        file_label = QLabel("File name:")
+        file_input = QLineEdit()
+        layout.addWidget(file_label)
+        layout.addWidget(file_input)
+
         format_label = QLabel("File format:")
         format_dropdown = QComboBox()
         if isinstance(self.current_plot_widget, QWebEngineView):
