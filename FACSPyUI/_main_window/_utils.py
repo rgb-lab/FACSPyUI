@@ -155,7 +155,6 @@ def error_handler(error_origin):
     def decorator(func):
         @wraps(func)
         def wrapper(self, *args, **kwargs):
-            print(self, "Args: ", *args, "Kwargs: ", **kwargs)
             try:
                 return func(self, *args, **kwargs)
             except Exception as e:

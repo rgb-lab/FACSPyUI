@@ -1,13 +1,10 @@
-import os
 import pandas as pd
-from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFileDialog, QComboBox, 
-                             QHBoxLayout, QFrame, QSizePolicy, QMessageBox, QFormLayout)
-from PyQt5.QtWidgets import (QMessageBox, QWidget, QVBoxLayout, 
-                             QPushButton, QFormLayout, QLabel,
-                             QLineEdit, QComboBox, QCheckBox,
-                             QGroupBox)
-from PyQt5.QtCore import Qt
-from PyQt5.QtCore import Qt, pyqtSignal, QThread, QMutex, QMutexLocker
+from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel,
+                             QPushButton, QLineEdit, QFileDialog,
+                             QComboBox, QHBoxLayout, QFrame,
+                             QMessageBox, QFormLayout)
+from .._utils import MultiSelectComboBox
+from PyQt5.QtCore import pyqtSignal, QThread, QMutex, QMutexLocker
 
 from .._utils import LoadingScreen
 
@@ -52,11 +49,8 @@ class DatasetCreator(QThread):
                                 transform = self.transform,
                                 cofactor_table = self.cofactor_table,
                                 key_added = self.key_added)
-            print(self.main_window.DATASHACK.keys())
 
             self.main_window.DATASHACK["user-created"] = dataset
-
-            print(self.main_window.DATASHACK.keys())
 
             self.finished.emit()
         except Exception as e:
@@ -144,7 +138,6 @@ class SettingsTab(QWidget):
 
         # Apply size policies to direct children only
         for widget in self.form_layout.findChildren(QWidget):
-            print(widget)
             set_size_policy(widget)
 
     def create_horizontal_layout(self, widget1, widget2):
@@ -301,5 +294,3 @@ class SettingsTab(QWidget):
             data.append(row_data)
 
         return pd.DataFrame(data, columns=headers)
-
-

@@ -1,10 +1,8 @@
 from PyQt5.QtWidgets import (QMessageBox, QVBoxLayout, 
                              QPushButton, QFormLayout, QLabel,
-                             QLineEdit, QComboBox, QCheckBox,
-                             QGroupBox)
+                             QComboBox)
 
-from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtCore import Qt, pyqtSignal, QThread, QMutex, QMutexLocker
+from PyQt5.QtCore import pyqtSignal, QThread, QMutex, QMutexLocker
 
 import FACSPy as fp
 

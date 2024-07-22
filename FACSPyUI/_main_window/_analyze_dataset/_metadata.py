@@ -101,6 +101,5 @@ class PlotWindowMetadata(PlotWindowFunctionGeneric):
             self._show_matplotlib(fig)
 
         except Exception as e:
-            print(str(e))
             self.show_error_dialog(f"Error generating Matplotlib plot: {e}")
 

@@ -67,6 +67,7 @@ def main():
 
     from _main_window._paths import ICON_PATH as icon_path
     from _main_window._paths import DATA_PATH as data_path
+    from _stylesheets import dark_stylesheet, light_stylesheet
     import copy
     from PyQt5.QtWidgets import (QMainWindow, QSplitter, QVBoxLayout, QHBoxLayout, QWidget, QComboBox,
                                  QLabel, QScrollArea, QSizePolicy, QPushButton, QInputDialog, QMessageBox,
@@ -332,15 +333,15 @@ def main():
                     QMessageBox.information(self, "Success", f"Dataset '{selected_key}' removed.")
 
 
-    light_file = QFile(":/light/stylesheet.qss")
-    light_file.open(QFile.ReadOnly | QFile.Text)
-    light_stream = QTextStream(light_file)
-    light_stylesheet = light_stream.readAll()
+    # light_file = QFile(":/light/stylesheet.qss")
+    # light_file.open(QFile.ReadOnly | QFile.Text)
+    # light_stream = QTextStream(light_file)
+    # light_stylesheet = light_stream.readAll()
 
-    dark_file = QFile(":/dark/stylesheet.qss")
-    dark_file.open(QFile.ReadOnly | QFile.Text)
-    dark_stream = QTextStream(dark_file)
-    dark_stylesheet = dark_stream.readAll()
+    # dark_file = QFile(":/dark/stylesheet.qss")
+    # dark_file.open(QFile.ReadOnly | QFile.Text)
+    # dark_stream = QTextStream(dark_file)
+    # dark_stylesheet = dark_stream.readAll()
 
     window = FACSPyBrowser(light_stylesheet, dark_stylesheet)
     window.setStyleSheet(light_stylesheet)
