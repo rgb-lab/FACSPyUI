@@ -1,5 +1,8 @@
 # -*- mode: python ; coding: utf-8 -*-
 from PyInstaller.utils.hooks import copy_metadata
+import sys
+
+sys.setrecursionlimit(5000)
 
 datas = [('_datasets/*', '_datasets/'), ('_icons/*', '_icons')]
 datas += copy_metadata('scanpy', recursive=True)
