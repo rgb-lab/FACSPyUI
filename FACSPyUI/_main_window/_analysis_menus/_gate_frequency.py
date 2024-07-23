@@ -51,7 +51,7 @@ class GateFrequencyWindow(QWidget):
 
             # Show loading screen
             loading_message = "Calculating gate frequencies..."
-            self.loading_screen = LoadingScreen(message=loading_message)
+            self.loading_screen = LoadingScreen(main_window = self.main_window, message=loading_message)
             self.loading_screen.cancel_signal.connect(self.cancel_calculation)
             self.loading_screen.show()
 

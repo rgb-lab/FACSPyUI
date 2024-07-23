@@ -1,8 +1,8 @@
-from PyQt5.QtWidgets import (QMessageBox, QWidget, QVBoxLayout, 
+from PyQt5.QtWidgets import (QMessageBox, QVBoxLayout, 
                              QPushButton, QFormLayout, QLabel,
                              QLineEdit, QComboBox, QCheckBox,
                              QGroupBox)
-from PyQt5.QtCore import Qt, pyqtSignal, QThread, QMutex, QMutexLocker
+from PyQt5.QtCore import pyqtSignal, QThread, QMutex, QMutexLocker
 
 import FACSPy as fp
 
@@ -226,7 +226,7 @@ class SamplewisePCAWindow(BaseSamplewiseDimensionalityReductionWindow):
             loading_message = "Calculating samplewise PCA...\n\n"
             loading_message += f"Data metric: {data_metric}\n"
             loading_message += f"Data: {layer}"
-            self.loading_screen = LoadingScreen(message=loading_message)
+            self.loading_screen = LoadingScreen(main_window = self.main_window, message=loading_message)
             self.loading_screen.cancel_signal.connect(self.cancel_calculation)
             self.loading_screen.show()
 
@@ -411,7 +411,7 @@ class SamplewiseMDSWindow(BaseSamplewiseDimensionalityReductionWindow):
             loading_message = "Calculating samplewise MDS...\n\n"
             loading_message += f"Data metric: {data_metric}\n"
             loading_message += f"Data: {layer}"
-            self.loading_screen = LoadingScreen(message=loading_message)
+            self.loading_screen = LoadingScreen(main_window = self.main_window, message=loading_message)
             self.loading_screen.cancel_signal.connect(self.cancel_calculation)
             self.loading_screen.show()
 
@@ -647,7 +647,7 @@ class SamplewiseUMAPWindow(BaseSamplewiseDimensionalityReductionWindow):
             loading_message = "Calculating samplewise UMAP...\n\n"
             loading_message += f"Data metric: {data_metric}\n"
             loading_message += f"Data: {layer}"
-            self.loading_screen = LoadingScreen(message=loading_message)
+            self.loading_screen = LoadingScreen(main_window = self.main_window, message=loading_message)
             self.loading_screen.cancel_signal.connect(self.cancel_calculation)
             self.loading_screen.show()
 
@@ -864,7 +864,7 @@ class SamplewiseTSNEWindow(BaseSamplewiseDimensionalityReductionWindow):
             loading_message = "Calculating samplewise t-SNE...\n\n"
             loading_message += f"Data metric: {data_metric}\n"
             loading_message += f"Data: {layer}"
-            self.loading_screen = LoadingScreen(message=loading_message)
+            self.loading_screen = LoadingScreen(main_window = self.main_window, message=loading_message)
             self.loading_screen.cancel_signal.connect(self.cancel_calculation)
             self.loading_screen.show()
 

@@ -1,12 +1,12 @@
-from PyQt5.QtWidgets import (QMessageBox, QWidget, QVBoxLayout, 
+from PyQt5.QtWidgets import (QMessageBox, QVBoxLayout, 
                              QPushButton, QFormLayout, QLabel,
                              QLineEdit, QComboBox, QCheckBox,
                              QGroupBox)
-from PyQt5.QtCore import Qt, pyqtSignal, QThread, QMutex, QMutexLocker
+from PyQt5.QtCore import pyqtSignal, QThread, QMutex, QMutexLocker
 
 import FACSPy as fp
 
-from .._utils import LoadingScreen, MultiSelectComboBox
+from .._utils import LoadingScreen
 from ._analysis_menu import BaseAnalysisMenu
 
 class BaseIntegrationWindow(BaseAnalysisMenu):
@@ -207,7 +207,7 @@ class HarmonyWindow(BaseIntegrationWindow):
             loading_message = "Calculating Harmony Integration...\n\n"
             loading_message += f"Population: {gate}\n"
             loading_message += f"Data: {layer}"
-            self.loading_screen = LoadingScreen(message=loading_message)
+            self.loading_screen = LoadingScreen(main_window = self.main_window, message=loading_message)
             self.loading_screen.cancel_signal.connect(self.cancel_calculation)
             self.loading_screen.show()
 
@@ -344,7 +344,7 @@ class ScanoramaWindow(BaseIntegrationWindow):
             loading_message = "Calculating Scanorama Integration...\n\n"
             loading_message += f"Population: {gate}\n"
             loading_message += f"Data: {layer}"
-            self.loading_screen = LoadingScreen(message=loading_message)
+            self.loading_screen = LoadingScreen(main_window = self.main_window, message=loading_message)
             self.loading_screen.cancel_signal.connect(self.cancel_calculation)
             self.loading_screen.show()
 

@@ -206,7 +206,7 @@ class SinglecellPCAWindow(BaseDimensionalityReductionWindow):
             loading_message = "Calculating PCA...\n\n"
             loading_message += f"Population: {gate}\n"
             loading_message += f"Data: {layer}"
-            self.loading_screen = LoadingScreen(message=loading_message)
+            self.loading_screen = LoadingScreen(main_window = self.main_window, message=loading_message)
             self.loading_screen.cancel_signal.connect(self.cancel_calculation)
             self.loading_screen.show()
 
@@ -396,7 +396,7 @@ class SinglecellUMAPWindow(BaseDimensionalityReductionWindow):
             loading_message = "Calculating UMAP...\n\n"
             loading_message += f"Population: {gate}\n"
             loading_message += f"Data: {layer}"
-            self.loading_screen = LoadingScreen(message=loading_message)
+            self.loading_screen = LoadingScreen(main_window = self.main_window, message=loading_message)
             self.loading_screen.cancel_signal.connect(self.cancel_calculation)
             self.loading_screen.show()
 
@@ -549,7 +549,7 @@ class SinglecellTSNEWindow(BaseDimensionalityReductionWindow):
             loading_message = "Calculating t-SNE...\n\n"
             loading_message += f"Population: {gate}\n"
             loading_message += f"Data: {layer}"
-            self.loading_screen = LoadingScreen(message=loading_message)
+            self.loading_screen = LoadingScreen(main_window = self.main_window, message=loading_message)
             self.loading_screen.cancel_signal.connect(self.cancel_calculation)
             self.loading_screen.show()
 
@@ -677,7 +677,7 @@ class SinglecellDiffmapWindow(BaseDimensionalityReductionWindow):
             loading_message = "Calculating Diffusion Map...\n\n"
             loading_message += f"Population: {gate}\n"
             loading_message += f"Data: {layer}"
-            self.loading_screen = LoadingScreen(message=loading_message)
+            self.loading_screen = LoadingScreen(main_window = self.main_window, message=loading_message)
             self.loading_screen.cancel_signal.connect(self.cancel_calculation)
             self.loading_screen.show()
 
@@ -854,7 +854,7 @@ class SinglecellNeighborsWindow(BaseDimensionalityReductionWindow):
             loading_message = "Calculating Neighbors...\n\n"
             loading_message += f"Population: {gate}\n"
             loading_message += f"Data: {layer}"
-            self.loading_screen = LoadingScreen(message=loading_message)
+            self.loading_screen = LoadingScreen(main_window = self.main_window, message=loading_message)
             self.loading_screen.cancel_signal.connect(self.cancel_calculation)
             self.loading_screen.show()
 

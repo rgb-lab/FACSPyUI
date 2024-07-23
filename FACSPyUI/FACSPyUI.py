@@ -114,6 +114,7 @@ def main():
         def set_style_sheet(self,
                             which: Literal["light", "dark"]):
             self.stylesheet = self.get_style_sheet(which)
+            self.setStyleSheet(self.stylesheet)
 
         def init_ui(self):
             # Create a top container for the dataset selection and display

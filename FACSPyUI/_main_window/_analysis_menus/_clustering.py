@@ -1,8 +1,8 @@
-from PyQt5.QtWidgets import (QMessageBox, QWidget, QVBoxLayout, 
+from PyQt5.QtWidgets import (QMessageBox, QVBoxLayout, 
                              QPushButton, QFormLayout, QLabel,
                              QLineEdit, QComboBox, QCheckBox,
                              QGroupBox)
-from PyQt5.QtCore import Qt, pyqtSignal, QThread, QMutex, QMutexLocker
+from PyQt5.QtCore import pyqtSignal, QThread, QMutex, QMutexLocker
 
 import FACSPy as fp
 
@@ -212,7 +212,7 @@ class LeidenWindow(BaseClusteringWindow):
             loading_message = "Calculating Leiden clustering...\n\n"
             loading_message += f"Population: {gate}\n"
             loading_message += f"Data: {layer}"
-            self.loading_screen = LoadingScreen(message=loading_message)
+            self.loading_screen = LoadingScreen(main_window = self.main_window, message=loading_message)
             self.loading_screen.cancel_signal.connect(self.cancel_calculation)
             self.loading_screen.show()
 
@@ -420,7 +420,7 @@ class FlowsomWindow(BaseClusteringWindow):
             loading_message = "Calculating FlowSOM clustering...\n\n"
             loading_message += f"Population: {gate}\n"
             loading_message += f"Data: {layer}"
-            self.loading_screen = LoadingScreen(message=loading_message)
+            self.loading_screen = LoadingScreen(main_window = self.main_window, message=loading_message)
             self.loading_screen.cancel_signal.connect(self.cancel_calculation)
             self.loading_screen.show()
 
@@ -641,7 +641,7 @@ class ParcWindow(BaseClusteringWindow):
             loading_message = "Calculating PARC clustering...\n\n"
             loading_message += f"Population: {gate}\n"
             loading_message += f"Data: {layer}"
-            self.loading_screen = LoadingScreen(message=loading_message)
+            self.loading_screen = LoadingScreen(main_window = self.main_window, message=loading_message)
             self.loading_screen.cancel_signal.connect(self.cancel_calculation)
             self.loading_screen.show()
 
@@ -863,7 +863,7 @@ class PhenographWindow(BaseClusteringWindow):
             loading_message = "Calculating Phenograph clustering...\n\n"
             loading_message += f"Population: {gate}\n"
             loading_message += f"Data: {layer}"
-            self.loading_screen = LoadingScreen(message=loading_message)
+            self.loading_screen = LoadingScreen(main_window = self.main_window, message=loading_message)
             self.loading_screen.cancel_signal.connect(self.cancel_calculation)
             self.loading_screen.show()
 

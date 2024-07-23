@@ -74,11 +74,7 @@ class ToolBar(QToolBar, FileHandler):
         return
 
     def set_dark_mode(self):
-        dark_stylesheet = self.main_window.get_style_sheet("dark")
         self.main_window.set_style_sheet("dark")
-        self.main_window.setStyleSheet(dark_stylesheet)
 
     def set_light_mode(self):
-        light_stylesheet = self.main_window.get_style_sheet("light")
-        self.main_window.set_style_sheet("dark")
-        self.main_window.setStyleSheet(light_stylesheet)
+        self.main_window.set_style_sheet("light")

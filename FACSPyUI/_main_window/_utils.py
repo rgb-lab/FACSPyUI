@@ -11,8 +11,10 @@ from functools import wraps
 class LoadingScreen(QWidget):
     cancel_signal = pyqtSignal()  # Signal to cancel the operation
 
-    def __init__(self, message="Processing..."):
+    def __init__(self, main_window, message="Processing..."):
         super().__init__()
+        self.main_window = main_window
+        self.setStyleSheet(self.main_window.stylesheet)
         self.setWindowTitle("Loading")
         self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
 
@@ -22,12 +24,14 @@ class LoadingScreen(QWidget):
 
         self.label.setAlignment(Qt.AlignCenter)
         self.spinner_label = QLabel()
+        self.spinner_label.setScaledContents(True)
+        self.spinner_label.setFixedSize(30,30)
         self.spinner_label.setAlignment(Qt.AlignCenter)
         self.spinner_label.setMovie(self.spinner)
         self.spinner.start()
 
-        layout.addWidget(self.label)
-        layout.addWidget(self.spinner_label)
+        layout.addWidget(self.label, alignment = Qt.AlignCenter)
+        layout.addWidget(self.spinner_label, alignment = Qt.AlignCenter)
 
         # Create and add the Cancel button
         self.cancel_button = QPushButton("Cancel")
