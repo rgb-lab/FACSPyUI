@@ -5,7 +5,8 @@ from PyQt5.QtWidgets import QApplication, QSplashScreen
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 
-import breeze_resources
+from _main_window import ToolBar
+from _stylesheets import breeze_resources
 
 import plotly
 from typing import Literal
@@ -67,7 +68,7 @@ def main():
 
     from _main_window._paths import ICON_PATH as icon_path
     from _main_window._paths import DATA_PATH as data_path
-    from _stylesheets import dark_stylesheet, light_stylesheet
+    from _stylesheets import dark_stylesheet, light_stylesheet, breeze_resources
     import copy
     from PyQt5.QtWidgets import (QMainWindow, QSplitter, QVBoxLayout, QHBoxLayout, QWidget, QComboBox,
                                  QLabel, QScrollArea, QSizePolicy, QPushButton, QInputDialog, QMessageBox,
