@@ -60,7 +60,7 @@ class PlotWindowMarkerCorrelation(PlotWindowFunctionGeneric):
             "adata": dataset,
             "gate": plot_config.get("gate"),
             "layer": plot_config.get("layer"),
-            "include_technical_channels": plot_config.get("include_technical_channels") == "True",
+            "include_technical_channels": plot_config.get("include_technical_channels") != "True",
             "exclude": plot_config.get("exclude"),
             "scaling": plot_config.get("scaling"),
             "data_metric": plot_config.get("data_metric"),
@@ -69,9 +69,6 @@ class PlotWindowMarkerCorrelation(PlotWindowFunctionGeneric):
             "show": False,
             "return_fig": True,
         }
-
-        if self._raw_config["include_technical_channels"] is True:
-            self._raw_config["include_technical_channels"] = False
 
     def generate_matplotlib(self, plot_config):
         dataset = self.retrieve_dataset()

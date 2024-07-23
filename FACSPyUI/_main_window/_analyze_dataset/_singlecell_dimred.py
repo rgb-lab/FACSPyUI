@@ -4,9 +4,6 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QFormLayout
 from matplotlib import pyplot as plt
 
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-
-
 from . import PlotWindowFunctionGeneric, BaseConfigPanel
 
 

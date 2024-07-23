@@ -13,6 +13,3 @@ CMAP_MAP = {
     "magma": px.colors.sequential.Magma,
     "Reds_r": px.colors.sequential.Reds_r
 }
-
-
-
