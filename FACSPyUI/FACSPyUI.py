@@ -5,7 +5,6 @@ from PyQt5.QtWidgets import QApplication, QSplashScreen
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 
-from _main_window import ToolBar
 from _stylesheets import breeze_resources
 
 import plotly
