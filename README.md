@@ -18,14 +18,13 @@ With conda installed, open your terminal and create a new environment by executi
 >>> conda activate facspy
 ```
 
-Navigate to the folder where you cloned the repository in and run:
+First, install all dependencies. For FACSPy, use the github repo.
 ```shell
->>> pip install .
+>>> pip install git+https://github.com/TarikExner/FACSPy@main
+>>> pip install pyqt5 plotly pyinstaller PyQtWebEngine
 ```
 
-This installs FACSPy, the UI and all dependencies.
-
-In order to run the app, navigate to the folder FACSPyUI and type
+In order to run the app locally , navigate to the folder FACSPyUI and type
 ```shell
 >>> python FACSPyUI.py
 ```
