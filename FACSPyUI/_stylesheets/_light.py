@@ -493,7 +493,6 @@ QLineEdit
     border: 0.04em solid #bab9b8;
     border-radius: 0.09em;
     color: #31363b;
-    min-height: 30px;
 }
 
 QAbstractScrollArea

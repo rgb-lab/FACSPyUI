@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QComboBox, QLabel,
                              QHBoxLayout, QPushButton, QGroupBox,
                              QMessageBox, QScrollArea, QLineEdit, QCheckBox,
-                             QFormLayout)
+                             QFormLayout, QSizePolicy)
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QFont, QColor
 from PyQt5.QtCore import pyqtSignal
 from typing import Optional
@@ -249,14 +249,16 @@ class ConfigPanel(QWidget):
 
 class BaseConfigPanel(QWidget):
     plot_requested = pyqtSignal(dict)
+    submenu_opened = pyqtSignal(int, QWidget)
 
     def __init__(self, main_window):
         super().__init__()
-        self.main_window = main_window  # Store reference to main window
+        self.main_window = main_window
 
         # Scroll area
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
+        self.submenu_opened.connect(self.resize_window_for_additional_menus)
 
         # Scroll area widget contents
         self.scroll_widget = QWidget()
@@ -269,6 +271,11 @@ class BaseConfigPanel(QWidget):
         self.main_layout.addWidget(self.scroll_area)
 
         self.setLayout(self.main_layout)
+
+    def resize_window_for_additional_menus(self,
+                                           height_increase,
+                                           widget):
+        widget.setFixedHeight(height_increase)
 
     def render_plot(self):
         """
@@ -297,7 +304,8 @@ class BaseConfigPanel(QWidget):
         button_width = int(total_width * 0.3)
 
         def set_size_policy(widget, width):
-            if isinstance(widget, (QLineEdit, QComboBox, QPushButton, QLabel)) and not isinstance(widget.parent(), MultiSelectComboBox):
+            if isinstance(widget, (QLineEdit, QComboBox, QPushButton, QLabel, QGroupBox)) \
+                    and not isinstance(widget.parent(), MultiSelectComboBox):
                 widget.setFixedWidth(width)
 
         for widget in self.findChildren(QLabel):
@@ -796,7 +804,7 @@ class BaseConfigPanel(QWidget):
 
     def add_data_parameters_label(self):
         data_parameters_label = QLabel("<b>Data Parameters</b>")
-        data_parameters_label.setContentsMargins(0, 0, 0, 0)  # Remove extra space around the QLabel
+        data_parameters_label.setContentsMargins(0, 0, 0, 0)
         data_parameters_label.setFixedHeight(50)
         self.scroll_layout.addWidget(data_parameters_label)
 
@@ -831,25 +839,27 @@ class BaseConfigPanel(QWidget):
         self.scroll_layout.addWidget(self.layout_parameters_checkbox)
 
         self.layout_parameters_group = QGroupBox("Layout Parameters")
+
         self.layout_parameters_layout = QFormLayout()
+
         self.layout_parameters_group.setLayout(self.layout_parameters_layout)
         self.layout_parameters_group.setVisible(False)
-        self.scroll_layout.addWidget(self.layout_parameters_group)
 
-        # Title
         self.title_label = QLabel("Title:")
         self.title_input = QLineEdit()
         self.layout_parameters_layout.addRow(self.title_label, self.title_input)
 
-        # X-axis label
         self.xlabel_label = QLabel("X-axis label:")
         self.xlabel_input = QLineEdit()
         self.layout_parameters_layout.addRow(self.xlabel_label, self.xlabel_input)
 
-        # Y-axis label
         self.ylabel_label = QLabel("Y-axis label:")
         self.ylabel_input = QLineEdit()
         self.layout_parameters_layout.addRow(self.ylabel_label, self.ylabel_input)
+
+        self.layout_parameters_group.setFixedHeight(200)
+
+        self.scroll_layout.addWidget(self.layout_parameters_group)
 
     def add_fontsize_parameters(self):
         """
@@ -1020,7 +1030,6 @@ class BaseConfigPanel(QWidget):
         self.vmax_input = QLineEdit()
         self.colorscale_parameters_layout.addRow(self.vmax_label, self.vmax_input)
         
-    
     def add_continous_cmaps_input(self):
         self.continuous_colormap_label = QLabel("Colormap:")
         self.continuous_colormap_dropdown = QComboBox()
@@ -1033,48 +1042,75 @@ class BaseConfigPanel(QWidget):
         self.full_colormap_dropdown.addItems(CATEGORICAL_CMAPS + CONTINUOUS_CMAPS)
         self.form_layout.addRow(self.full_colormap_label, self.full_colormap_dropdown)
 
-
     def toggle_layout_parameters(self):
         """
         Toggles the visibility of the layout parameters section.
         """
         self.layout_parameters_group.setVisible(self.layout_parameters_checkbox.isChecked())
+        self.submenu_opened.emit(
+            self.layout_parameters_group.sizeHint().height(),
+            self.layout_parameters_group
+        )
 
     def toggle_fontsize_parameters(self):
         """
         Toggles the visibility of the font size parameters section.
         """
         self.fontsize_parameters_group.setVisible(self.fontsize_parameters_checkbox.isChecked())
+        self.submenu_opened.emit(
+            self.fontsize_parameters_group.sizeHint().height(),
+            self.fontsize_parameters_group
+        )
 
     def toggle_dot_parameters(self):
         """
         Toggles the visibility of the dot parameters section.
         """
         self.dot_parameters_group.setVisible(self.dot_parameters_checkbox.isChecked())
+        self.submenu_opened.emit(
+            self.dot_parameters_group.sizeHint().height(),
+            self.dot_parameters_group
+        )
 
     def toggle_aspect_parameters(self):
         """
         Toggles the visibility of the dot parameters section.
         """
         self.aspect_parameters_group.setVisible(self.aspect_parameters_checkbox.isChecked())
+        self.submenu_opened.emit(
+            self.aspect_parameters_group.sizeHint().height(),
+            self.aspect_parameters_group
+        )
 
     def toggle_colorscale_parameters(self):
         """
         Toggles the visibility of the colorscale parameters section.
         """
         self.colorscale_parameters_group.setVisible(self.colorscale_parameters_checkbox.isChecked())
+        self.submenu_opened.emit(
+            self.colorscale_parameters_group.sizeHint().height(),
+            self.colorscale_parameters_group
+        )
 
     def toggle_xscale_parameters(self):
         """
         Toggles the visibility of the colorscale parameters section.
         """
         self.xscale_parameters_group.setVisible(self.xscale_parameters_checkbox.isChecked())
+        self.submenu_opened.emit(
+            self.xscale_parameters_group.sizeHint().height(),
+            self.xscale_parameters_group
+        )
 
     def toggle_yscale_parameters(self):
         """
         Toggles the visibility of the colorscale parameters section.
         """
         self.yscale_parameters_group.setVisible(self.yscale_parameters_checkbox.isChecked())
+        self.submenu_opened.emit(
+            self.yscale_parameters_group.sizeHint().height(),
+            self.yscale_parameters_group
+        )
 
     def download_plot(self):
         """
