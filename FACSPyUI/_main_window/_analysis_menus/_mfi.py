@@ -36,13 +36,14 @@ class BaseExpressionWindow(BaseAnalysisMenu):
         self.agg_method_label = QLabel("Aggregation method:")
         self.agg_method_dropdown = QComboBox()
         self.agg_method_dropdown.addItems(["median", "mean"])
-        self.agg_method_dropdown.setCurrentText("mean")
+        self.agg_method_dropdown.setCurrentText("median")
         self.form_layout.addRow(self.agg_method_label, self.agg_method_dropdown)
 
         # Use markers only
         self.use_markers_only_label = QLabel("Use markers only:")
         self.use_markers_only_dropdown = QComboBox()
         self.use_markers_only_dropdown.addItems(["True", "False"])
+        self.use_markers_only_dropdown.setCurrentText("False")
         self.form_layout.addRow(self.use_markers_only_label, self.use_markers_only_dropdown)
 
         # Aggregate

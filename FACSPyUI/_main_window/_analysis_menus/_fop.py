@@ -41,6 +41,7 @@ class BaseFOPWindow(BaseAnalysisMenu):
         self.use_markers_only_label = QLabel("Use markers only:")
         self.use_markers_only_dropdown = QComboBox()
         self.use_markers_only_dropdown.addItems(["True", "False"])
+        self.use_markers_only_dropdown.setCurrentText("False")
         self.form_layout.addRow(self.use_markers_only_label, self.use_markers_only_dropdown)
 
         # Aggregate
