@@ -26,7 +26,13 @@ class ToolBar(QToolBar, FileHandler):
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         self.addWidget(spacer)
 
-        self.toggle_mode_action = QAction("Toggle Light/Dark Mode", self)
+        self.is_dark_mode = False
+        
+        if self.is_dark_mode:
+            self.toggle_mode_action = QAction("Activate Light Mode", self)
+        else:
+            self.toggle_mode_action = QAction("Activate Dark Mode", self)
+
         self.addAction(self.toggle_mode_action)
 
         self.new_action.triggered.connect(self.create_new_dataset)
@@ -34,8 +40,6 @@ class ToolBar(QToolBar, FileHandler):
         self.save_action.triggered.connect(self.save_file)
         self.toggle_mode_action.triggered.connect(self.toggle_mode)
 
-        self.is_dark_mode = False
-        self.update_mode_icon()
 
     def toggle_mode(self):
         self.is_dark_mode = not self.is_dark_mode
@@ -43,9 +47,15 @@ class ToolBar(QToolBar, FileHandler):
             self.set_dark_mode()
         else:
             self.set_light_mode()
-        self.update_mode_icon()
         self.update_config_panel()
         self.update_file_icons()
+        self.update_label()
+
+    def update_label(self):
+        if self.is_dark_mode:
+            self.toggle_mode_action.setText("Activate Light Mode")
+        else:
+            self.toggle_mode_action.setText("Activate Dark Mode")
 
     def update_file_icons(self):
         if self.is_dark_mode:
@@ -65,13 +75,6 @@ class ToolBar(QToolBar, FileHandler):
         config_panel.populate_analysis_dropdown()
         config_panel.analysis_dropdown.currentIndexChanged.connect(config_panel.on_analysis_type_selected)
         config_panel.analysis_dropdown.setCurrentIndex(current_index)
-
-    def update_mode_icon(self):
-        # if self.is_dark_mode:
-        #     self.toggle_mode_action.setIcon(QIcon(os.path.join(icon_path, "sun_icon.svg")))
-        # else:
-        #     self.toggle_mode_action.setIcon(QIcon(os.path.join(icon_path, "moon_icon.svg")))
-        return
 
     def set_dark_mode(self):
         self.main_window.set_style_sheet("dark")
