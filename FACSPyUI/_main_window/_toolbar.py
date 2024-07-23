@@ -14,9 +14,9 @@ class ToolBar(QToolBar, FileHandler):
         self.setIconSize(QSize(24, 24))
 
 
-        self.new_action = QAction(QIcon(os.path.join(icon_path, "new_analysis.svg")), "New Analysis", self)
-        self.open_action = QAction(QIcon(os.path.join(icon_path, "open_file.svg")), "Open", self)
-        self.save_action = QAction(QIcon(os.path.join(icon_path, "save_file.svg")), "Save", self)
+        self.new_action = QAction(QIcon(os.path.join(icon_path, "_new_analysis_light.svg")), "New Analysis", self)
+        self.open_action = QAction(QIcon(os.path.join(icon_path, "_open_dir_light.svg")), "Open", self)
+        self.save_action = QAction(QIcon(os.path.join(icon_path, "_save_light.svg")), "Save", self)
 
         self.addAction(self.new_action)
         self.addAction(self.open_action)
@@ -45,6 +45,18 @@ class ToolBar(QToolBar, FileHandler):
             self.set_light_mode()
         self.update_mode_icon()
         self.update_config_panel()
+        self.update_file_icons()
+
+    def update_file_icons(self):
+        if self.is_dark_mode:
+            self.new_action.setIcon(QIcon(os.path.join(icon_path, "_new_analysis_dark.svg")))
+            self.open_action.setIcon(QIcon(os.path.join(icon_path, "_open_dir_dark.svg")))
+            self.save_action.setIcon(QIcon(os.path.join(icon_path, "_save_dark.svg")))
+        else:
+            self.new_action.setIcon(QIcon(os.path.join(icon_path, "_new_analysis_light.svg")))
+            self.open_action.setIcon(QIcon(os.path.join(icon_path, "_open_dir_light.svg")))
+            self.save_action.setIcon(QIcon(os.path.join(icon_path, "_save_light.svg")))
+
 
     def update_config_panel(self):
         config_panel = self.main_window.config_panel
