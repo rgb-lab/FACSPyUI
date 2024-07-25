@@ -387,6 +387,10 @@ class BaseConfigPanel(QWidget):
                 self.yscale_dropdown.clear()
                 self.yscale_dropdown.addItems(["biex", "linear", "log"])
 
+            if hasattr(self, 'colorscale_dropdown'):
+                self.colorscale_dropdown.clear()
+                self.colorscale_dropdown.addItems(["biex", "linear", "log"])
+
             if hasattr(self, 'cluster_key_dropdown'):
                 self.cluster_key_dropdown.clear()
                 cluster_columns = [
@@ -538,8 +542,8 @@ class BaseConfigPanel(QWidget):
             plot_config["cmap"] = self.colormap_dropdown.currentText()
 
         # Colorscale parameters
-        if hasattr(self, 'colorscale_input'):
-            plot_config["color_scale"] = self.colorscale_input.text()
+        if hasattr(self, 'colorscale_dropdown'):
+            plot_config["color_scale"] = self.colorscale_dropdown.currentText()
         if hasattr(self, 'vmin_input'):
             plot_config["vmin"] = self.vmin_input.text()
         if hasattr(self, 'vmax_input'):
@@ -984,8 +988,8 @@ class BaseConfigPanel(QWidget):
 
         # Dot size
         self.colorscale_label = QLabel("Scale:")
-        self.colorscale_input = QLineEdit()
-        self.colorscale_parameters_layout.addRow(self.colorscale_label, self.colorscale_input)
+        self.colorscale_dropdown = QComboBox()
+        self.colorscale_parameters_layout.addRow(self.colorscale_label, self.colorscale_dropdown)
 
         # VMIN
         self.vmin_label = QLabel("vmin:")
