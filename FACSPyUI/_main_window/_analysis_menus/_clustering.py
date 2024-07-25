@@ -274,19 +274,11 @@ class FlowsomWorker(QThread):
         self._mutex = QMutex()  # Mutex for thread-safe flag
 
     def run(self):
-        import traceback
         try:
             with QMutexLocker(self._mutex):
                 if not self._is_running:
                     self.error.emit("FlowSOM clustering calculation was canceled.")
                     return
-            print("running flowsom")
-            print(self.dataset)
-            print(self.gate)
-            print(self.layer)
-            print(self.use_only_fluo)
-            print(self.exclude_channels)
-            print(self.scaling)
             fp.tl.flowsom(
                 self.dataset,
                 gate=self.gate,
@@ -299,7 +291,6 @@ class FlowsomWorker(QThread):
 
             self.finished.emit()
         except Exception as e:
-            print(traceback.format_exc())
             self.error.emit(str(e))
 
     def stop(self):
