@@ -78,6 +78,8 @@ class PlotWindowBiaxScatter(PlotWindowFunctionGeneric):
         color_scale = plot_config.get("color_scale")
         x_scale = plot_config.get("x_scale")
         y_scale = plot_config.get("y_scale")
+        vmin = plot_config.get("vmin")
+        vmax = plot_config.get("vmax")
         scale_kwargs = {}
         if color_scale:
             scale_kwargs["color_scale"] = color_scale
@@ -85,6 +87,10 @@ class PlotWindowBiaxScatter(PlotWindowFunctionGeneric):
             scale_kwargs["x_scale"] = x_scale
         if y_scale:
             scale_kwargs["y_scale"] = y_scale
+        if vmax:
+            scale_kwargs["vmax"] = float(vmax)
+        if vmin:
+            scale_kwargs["vmin"] = float(vmin)
         self._scale_kwargs = scale_kwargs
 
 
