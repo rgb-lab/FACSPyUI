@@ -842,7 +842,6 @@ QPushButton
     padding: 0.23em;
     border-radius: 0.09em;
     outline: none;
-    min-height: 30px;
 }
 
 QPushButton:flat,
