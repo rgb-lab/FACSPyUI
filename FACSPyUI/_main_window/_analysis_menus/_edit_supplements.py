@@ -9,12 +9,11 @@ class EditSupplementWindow(QWidget):
     def __init__(self, main_window, dataframe):
         super().__init__()
         self.main_window = main_window
-        self.dataframe = dataframe.copy()  # Copy the DataFrame to allow modifications
+        self.dataframe = dataframe.copy()
 
         self.setWindowTitle("Edit Supplementary Data")
         self.setGeometry(150, 150, 800, 600)
 
-        # Create the main layout
         layout = QVBoxLayout()
 
         # Create a menu bar for table modifications
@@ -23,25 +22,25 @@ class EditSupplementWindow(QWidget):
 
         # Add Column action
         add_column_action = QAction("Add Column", self)
-        add_column_action.setShortcut(QKeySequence("Ctrl+Shift+C"))  # Shortcut for Add Column
+        add_column_action.setShortcut(QKeySequence("Ctrl+Shift+C"))
         add_column_action.triggered.connect(self.add_column)
         self.modify_menu.addAction(add_column_action)
 
         # Remove Column action
         remove_column_action = QAction("Remove Column", self)
-        remove_column_action.setShortcut(QKeySequence("Ctrl+Shift+X"))  # Shortcut for Remove Column
+        remove_column_action.setShortcut(QKeySequence("Ctrl+Shift+X"))
         remove_column_action.triggered.connect(self.remove_column)
         self.modify_menu.addAction(remove_column_action)
 
         # Add Row action
         add_row_action = QAction("Add Row", self)
-        add_row_action.setShortcut(QKeySequence("Ctrl+Shift+R"))  # Shortcut for Add Row
+        add_row_action.setShortcut(QKeySequence("Ctrl+Shift+R"))
         add_row_action.triggered.connect(self.add_row)
         self.modify_menu.addAction(add_row_action)
 
         # Remove Row action
         remove_row_action = QAction("Remove Row", self)
-        remove_row_action.setShortcut(QKeySequence("Ctrl+Shift+E"))  # Shortcut for Remove Row
+        remove_row_action.setShortcut(QKeySequence("Ctrl+Shift+E"))
         remove_row_action.triggered.connect(self.remove_row)
         self.modify_menu.addAction(remove_row_action)
 
