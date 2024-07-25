@@ -402,7 +402,9 @@ class BaseConfigPanel(QWidget):
             if hasattr(self, 'cluster_selection_dropdown'):
                 self.cluster_selection_dropdown.clear()
                 cluster_col = self.cluster_key_dropdown.currentText()
-                self.cluster_selection_dropdown.addItems(dataset.obs[cluster_col].unique().tolist())
+                clusters = dataset.obs[cluster_col].unique().tolist()
+                clusters = [str(cl) for cl in clusters]
+                self.cluster_selection_dropdown.addItems(clusters)
 
         except Exception as e:
             self.show_error("Dropdown Population Error", str(e))
@@ -801,7 +803,10 @@ class BaseConfigPanel(QWidget):
         button_layout.addWidget(self.download_data_button)
         self.scroll_layout.addLayout(button_layout)
 
-    def add_layout_parameters(self):
+    def add_layout_parameters(self,
+                              show_title: bool = True,
+                              show_xlabel: bool = True,
+                              show_ylabel: bool = True):
         """
         Adds layout parameters section.
         """
@@ -815,24 +820,30 @@ class BaseConfigPanel(QWidget):
 
         self.layout_parameters_group.setLayout(self.layout_parameters_layout)
         self.layout_parameters_group.setVisible(False)
+    
+        if show_title:
+            self.title_label = QLabel("Title:")
+            self.title_input = QLineEdit()
+            self.layout_parameters_layout.addRow(self.title_label, self.title_input)
 
-        self.title_label = QLabel("Title:")
-        self.title_input = QLineEdit()
-        self.layout_parameters_layout.addRow(self.title_label, self.title_input)
+        if show_xlabel:
+            self.xlabel_label = QLabel("X-axis label:")
+            self.xlabel_input = QLineEdit()
+            self.layout_parameters_layout.addRow(self.xlabel_label, self.xlabel_input)
 
-        self.xlabel_label = QLabel("X-axis label:")
-        self.xlabel_input = QLineEdit()
-        self.layout_parameters_layout.addRow(self.xlabel_label, self.xlabel_input)
-
-        self.ylabel_label = QLabel("Y-axis label:")
-        self.ylabel_input = QLineEdit()
-        self.layout_parameters_layout.addRow(self.ylabel_label, self.ylabel_input)
-
-        self.layout_parameters_group.setFixedHeight(200)
+        if show_ylabel:
+            self.ylabel_label = QLabel("Y-axis label:")
+            self.ylabel_input = QLineEdit()
+            self.layout_parameters_layout.addRow(self.ylabel_label, self.ylabel_input)
 
         self.scroll_layout.addWidget(self.layout_parameters_group)
 
-    def add_fontsize_parameters(self):
+    def add_fontsize_parameters(self,
+                                show_title: bool = True,
+                                show_xlabel: bool = True,
+                                show_ylabel: bool = True,
+                                show_xticklabel: bool = True,
+                                show_yticklabel: bool = True):
         """
         Adds font size parameters section.
         """
@@ -847,35 +858,45 @@ class BaseConfigPanel(QWidget):
         self.scroll_layout.addWidget(self.fontsize_parameters_group)
 
         # Title font size
-        self.title_fontsize_label = QLabel("Title font size:")
-        self.title_fontsize_input = QLineEdit()
-        self.fontsize_parameters_layout.addRow(self.title_fontsize_label, self.title_fontsize_input)
+        if show_title:
+            self.title_fontsize_label = QLabel("Title font size:")
+            self.title_fontsize_input = QLineEdit()
+            self.fontsize_parameters_layout.addRow(self.title_fontsize_label, self.title_fontsize_input)
 
         # X-axis label font size
-        self.xlabel_fontsize_label = QLabel("X label font size:")
-        self.xlabel_fontsize_input = QLineEdit()
-        self.fontsize_parameters_layout.addRow(self.xlabel_fontsize_label, self.xlabel_fontsize_input)
+        if show_xlabel:
+            self.xlabel_fontsize_label = QLabel("X label font size:")
+            self.xlabel_fontsize_input = QLineEdit()
+            self.fontsize_parameters_layout.addRow(self.xlabel_fontsize_label, self.xlabel_fontsize_input)
 
         # Y-axis label font size
-        self.ylabel_fontsize_label = QLabel("Y label font size:")
-        self.ylabel_fontsize_input = QLineEdit()
-        self.fontsize_parameters_layout.addRow(self.ylabel_fontsize_label, self.ylabel_fontsize_input)
+        if show_ylabel:
+            self.ylabel_fontsize_label = QLabel("Y label font size:")
+            self.ylabel_fontsize_input = QLineEdit()
+            self.fontsize_parameters_layout.addRow(self.ylabel_fontsize_label, self.ylabel_fontsize_input)
 
         # X tick labels font size
-        self.xticklabels_fontsize_label = QLabel("X tick labels font size:")
-        self.xticklabels_fontsize_input = QLineEdit()
-        self.fontsize_parameters_layout.addRow(self.xticklabels_fontsize_label, self.xticklabels_fontsize_input)
+        if show_xticklabel:
+            self.xticklabels_fontsize_label = QLabel("X tick labels font size:")
+            self.xticklabels_fontsize_input = QLineEdit()
+            self.fontsize_parameters_layout.addRow(self.xticklabels_fontsize_label, self.xticklabels_fontsize_input)
 
         # Y tick labels font size
-        self.yticklabels_fontsize_label = QLabel("Y tick labels font size:")
-        self.yticklabels_fontsize_input = QLineEdit()
-        self.fontsize_parameters_layout.addRow(self.yticklabels_fontsize_label, self.yticklabels_fontsize_input)
+        if show_yticklabel:
+            self.yticklabels_fontsize_label = QLabel("Y tick labels font size:")
+            self.yticklabels_fontsize_input = QLineEdit()
+            self.fontsize_parameters_layout.addRow(self.yticklabels_fontsize_label, self.yticklabels_fontsize_input)
 
-    def add_dot_parameters(self):
+    def add_dot_parameters(self,
+                           label: str = "Show Dot Parameters",
+                           show_dot_size: bool = True,
+                           show_linewidth: bool = True,
+                           show_linecolor: bool = True,
+                           show_cmap: bool = True):
         """
         Adds dot parameters section.
         """
-        self.dot_parameters_checkbox = QCheckBox("Show Dot Parameters")
+        self.dot_parameters_checkbox = QCheckBox(label)
         self.dot_parameters_checkbox.stateChanged.connect(self.toggle_dot_parameters)
         self.scroll_layout.addWidget(self.dot_parameters_checkbox)
 
@@ -885,26 +906,26 @@ class BaseConfigPanel(QWidget):
         self.dot_parameters_group.setVisible(False)
         self.scroll_layout.addWidget(self.dot_parameters_group)
 
-        # Dot size
-        self.dot_size_label = QLabel("Dot size:")
-        self.dot_size_input = QLineEdit()
-        self.dot_parameters_layout.addRow(self.dot_size_label, self.dot_size_input)
+        if show_dot_size:
+            self.dot_size_label = QLabel("Dot size:")
+            self.dot_size_input = QLineEdit()
+            self.dot_parameters_layout.addRow(self.dot_size_label, self.dot_size_input)
 
-        # Dot size
-        self.dot_linewidth_label = QLabel("Linewidth:")
-        self.dot_linewidth_input = QLineEdit()
-        self.dot_parameters_layout.addRow(self.dot_linewidth_label, self.dot_linewidth_input)
+        if show_linewidth:
+            self.dot_linewidth_label = QLabel("Linewidth:")
+            self.dot_linewidth_input = QLineEdit()
+            self.dot_parameters_layout.addRow(self.dot_linewidth_label, self.dot_linewidth_input)
 
-        # Dot size
-        self.dot_linecolor_label = QLabel("Linecolor:")
-        self.dot_linecolor_input = QLineEdit()
-        self.dot_parameters_layout.addRow(self.dot_linecolor_label, self.dot_linecolor_input)
+        if show_linecolor:
+            self.dot_linecolor_label = QLabel("Linecolor:")
+            self.dot_linecolor_input = QLineEdit()
+            self.dot_parameters_layout.addRow(self.dot_linecolor_label, self.dot_linecolor_input)
 
-        # Colormap
-        self.colormap_label = QLabel("Colormap:")
-        self.colormap_dropdown = QComboBox()
-        self.colormap_dropdown.addItems(CATEGORICAL_CMAPS + CONTINUOUS_CMAPS)
-        self.dot_parameters_layout.addRow(self.colormap_label, self.colormap_dropdown)
+        if show_cmap:
+            self.colormap_label = QLabel("Colormap:")
+            self.colormap_dropdown = QComboBox()
+            self.colormap_dropdown.addItems(CATEGORICAL_CMAPS + CONTINUOUS_CMAPS)
+            self.dot_parameters_layout.addRow(self.colormap_label, self.colormap_dropdown)
 
     def add_aspect_parameters(self):
         """
@@ -972,7 +993,10 @@ class BaseConfigPanel(QWidget):
         self.yscale_dropdown = QComboBox()
         self.yscale_parameters_layout.addRow(self.yscale_label, self.yscale_dropdown)
 
-    def add_colorscale_parameters(self):
+    def add_colorscale_parameters(self,
+                                  show_scale: bool = True,
+                                  show_vmin: bool = True,
+                                  show_vmax: bool = True):
         """
         adds parameters to control the color scale
         """
@@ -986,20 +1010,22 @@ class BaseConfigPanel(QWidget):
         self.colorscale_parameters_group.setVisible(False)
         self.scroll_layout.addWidget(self.colorscale_parameters_group)
 
-        # Dot size
-        self.colorscale_label = QLabel("Scale:")
-        self.colorscale_dropdown = QComboBox()
-        self.colorscale_parameters_layout.addRow(self.colorscale_label, self.colorscale_dropdown)
+        if show_scale:
+            self.colorscale_label = QLabel("Scale:")
+            self.colorscale_dropdown = QComboBox()
+            self.colorscale_parameters_layout.addRow(self.colorscale_label, self.colorscale_dropdown)
 
         # VMIN
-        self.vmin_label = QLabel("vmin:")
-        self.vmin_input = QLineEdit()
-        self.colorscale_parameters_layout.addRow(self.vmin_label, self.vmin_input)
+        if show_vmin:
+            self.vmin_label = QLabel("vmin:")
+            self.vmin_input = QLineEdit()
+            self.colorscale_parameters_layout.addRow(self.vmin_label, self.vmin_input)
 
         # VMAX
-        self.vmax_label = QLabel("vmax:")
-        self.vmax_input = QLineEdit()
-        self.colorscale_parameters_layout.addRow(self.vmax_label, self.vmax_input)
+        if show_vmax:
+            self.vmax_label = QLabel("vmax:")
+            self.vmax_input = QLineEdit()
+            self.colorscale_parameters_layout.addRow(self.vmax_label, self.vmax_input)
         
     def add_continous_cmaps_input(self):
         self.continuous_colormap_label = QLabel("Colormap:")

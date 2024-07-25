@@ -30,7 +30,10 @@ class ConfigPanelFoldChange(BaseConfigPanel):
 
         self.add_fontsize_parameters()
 
-        self.add_dot_parameters()
+        self.add_dot_parameters(label = "Select coloring",
+                                show_linewidth = False,
+                                show_dot_size = False,
+                                show_linecolor = False)
 
         self.scroll_layout.addStretch()
 

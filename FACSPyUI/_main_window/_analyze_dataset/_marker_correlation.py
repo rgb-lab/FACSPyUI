@@ -29,9 +29,12 @@ class ConfigPanelMarkerCorrelation(BaseConfigPanel):
 
         self.add_continous_cmaps_input()
 
-        self.add_layout_parameters()
+        self.add_layout_parameters(show_title = False,
+                                   show_xlabel = False)
 
-        self.add_fontsize_parameters()
+        self.add_fontsize_parameters(show_title = False,
+                                     show_xlabel = False,
+                                     show_xticklabel = False)
 
         self.scroll_layout.addStretch()
 

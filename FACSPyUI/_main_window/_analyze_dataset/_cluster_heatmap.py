@@ -3,8 +3,6 @@ import FACSPy as fp
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QFormLayout
 
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-
 from . import PlotWindowFunctionGeneric, BaseConfigPanel
 
 
@@ -35,9 +33,12 @@ class ConfigPanelClusterHeatmap(BaseConfigPanel):
 
         self.add_continous_cmaps_input()
 
-        self.add_layout_parameters()
+        self.add_layout_parameters(show_title = False,
+                                   show_ylabel = False)
 
-        self.add_fontsize_parameters()
+        self.add_fontsize_parameters(show_title = False,
+                                     show_ylabel = False,
+                                     show_yticklabel = False)
 
         self.scroll_layout.addStretch()
 

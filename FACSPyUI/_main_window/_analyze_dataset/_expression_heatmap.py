@@ -14,6 +14,7 @@ class ConfigPanelExpressionHeatmap(BaseConfigPanel):
         self.add_data_parameters_label()
 
         self.form_layout = QFormLayout()
+        
         self.scroll_layout.addLayout(self.form_layout)
 
         self.add_layer_input()
@@ -34,9 +35,12 @@ class ConfigPanelExpressionHeatmap(BaseConfigPanel):
 
         self.add_continous_cmaps_input()
 
-        self.add_layout_parameters()
+        # self.add_layout_parameters()
 
-        self.add_fontsize_parameters()
+        self.add_fontsize_parameters(show_title = False,
+                                     show_xlabel = False,
+                                     show_ylabel = False,
+                                     show_xticklabel = False)
 
         self.scroll_layout.addStretch()
 

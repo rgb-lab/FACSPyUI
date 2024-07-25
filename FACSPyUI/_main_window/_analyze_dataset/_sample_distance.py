@@ -30,9 +30,9 @@ class ConfigPanelSampleDistance(BaseConfigPanel):
 
         self.add_continous_cmaps_input()
 
-        self.add_layout_parameters()
+        # self.add_layout_parameters()
 
-        self.add_fontsize_parameters()
+        # self.add_fontsize_parameters()
 
         self.scroll_layout.addStretch()
 

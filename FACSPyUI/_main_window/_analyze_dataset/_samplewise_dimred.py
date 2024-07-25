@@ -28,7 +28,8 @@ class ConfigPanelSamplewiseDimred(BaseConfigPanel):
 
         self.add_layout_parameters()
 
-        self.add_fontsize_parameters()
+        self.add_fontsize_parameters(show_xticklabel = False,
+                                     show_yticklabel = False)
 
         self.add_dot_parameters()
 

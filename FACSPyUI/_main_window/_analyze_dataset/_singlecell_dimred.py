@@ -31,7 +31,7 @@ class ConfigPanelSinglecellDimred(BaseConfigPanel):
 
         self.add_dot_parameters()
 
-        self.add_colorscale_parameters()
+        self.add_colorscale_parameters(show_scale = False)
 
         self.scroll_layout.addStretch()
 
@@ -40,7 +40,6 @@ class ConfigPanelSinglecellDimred(BaseConfigPanel):
         self.setLayout(self.main_layout)
 
         self.populate_dropdowns()
-
 
 
 class PlotWindowSinglecellDimred(PlotWindowFunctionGeneric):

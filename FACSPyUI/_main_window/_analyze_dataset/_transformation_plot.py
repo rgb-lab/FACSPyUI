@@ -24,7 +24,7 @@ class ConfigPanelTransformationPlot(BaseConfigPanel):
 
         self.add_sample_size_input()
 
-        self.add_dot_parameters()
+        self.add_dot_parameters(show_cmap = False)
 
         self.scroll_layout.addStretch()
 
