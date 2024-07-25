@@ -53,6 +53,7 @@ class PlotWindowTransformationPlot(PlotWindowFunctionGeneric):
                 "sample_identifier": plot_config.get("sample_identifier"),
                 "marker": plot_config.get("marker"),
                 "scatter": plot_config.get("scatter"),
+                "sample_size": plot_config.get("sample_size"),
                 "show": False,
                 "return_fig": True,
         }
