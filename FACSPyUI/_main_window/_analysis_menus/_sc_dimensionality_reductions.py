@@ -190,6 +190,8 @@ class SinglecellPCAWindow(BaseDimensionalityReductionWindow):
             use_only_fluo = self.use_marker_dropdown.currentText() == "True"
             exclude_channels = self.exclude_channels_dropdown.currentText()
             scaling = self.scaling_dropdown.currentText()
+            if scaling == "None":
+                scaling = None
 
             # Collect advanced parameters
             n_components = self.n_components_input.text()
@@ -376,6 +378,8 @@ class SinglecellUMAPWindow(BaseDimensionalityReductionWindow):
             use_only_fluo = self.use_marker_dropdown.currentText() == "True"
             exclude_channels = self.exclude_channels_dropdown.currentText()
             scaling = self.scaling_dropdown.currentText()
+            if scaling == "None":
+                scaling = None
 
             # Collect advanced parameters
             advanced_kwargs = {
@@ -535,6 +539,8 @@ class SinglecellTSNEWindow(BaseDimensionalityReductionWindow):
             use_only_fluo = self.use_marker_dropdown.currentText() == "True"
             exclude_channels = self.exclude_channels_dropdown.currentText()
             scaling = self.scaling_dropdown.currentText()
+            if scaling == "None":
+                scaling = None
 
             # Collect advanced parameters
             advanced_kwargs = {
@@ -667,6 +673,8 @@ class SinglecellDiffmapWindow(BaseDimensionalityReductionWindow):
             use_only_fluo = self.use_marker_dropdown.currentText() == "True"
             exclude_channels = self.exclude_channels_dropdown.currentText()
             scaling = self.scaling_dropdown.currentText()
+            if scaling == "None":
+                scaling = None
 
             # Collect advanced parameters
             advanced_kwargs = {
@@ -840,6 +848,8 @@ class SinglecellNeighborsWindow(BaseDimensionalityReductionWindow):
             use_only_fluo = self.use_marker_dropdown.currentText() == "True"
             exclude_channels = self.exclude_channels_dropdown.currentText()
             scaling = self.scaling_dropdown.currentText()
+            if scaling == "None":
+                scaling = None
 
             # Collect advanced parameters
             n_neighbors = int(self.n_neighbors_input.text()) if self.n_neighbors_input.text() else 15
