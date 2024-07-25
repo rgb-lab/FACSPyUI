@@ -199,6 +199,8 @@ class LeidenWindow(BaseClusteringWindow):
             use_only_fluo = self.use_marker_dropdown.currentText() == "True"
             exclude_channels = self.exclude_channels_dropdown.currentText()
             scaling = self.scaling_dropdown.currentText()
+            if scaling == "None":
+                scaling = None
 
             # Collect advanced parameters with defaults
             advanced_kwargs = {
@@ -272,13 +274,19 @@ class FlowsomWorker(QThread):
         self._mutex = QMutex()  # Mutex for thread-safe flag
 
     def run(self):
+        import traceback
         try:
-
             with QMutexLocker(self._mutex):
                 if not self._is_running:
                     self.error.emit("FlowSOM clustering calculation was canceled.")
                     return
-
+            print("running flowsom")
+            print(self.dataset)
+            print(self.gate)
+            print(self.layer)
+            print(self.use_only_fluo)
+            print(self.exclude_channels)
+            print(self.scaling)
             fp.tl.flowsom(
                 self.dataset,
                 gate=self.gate,
@@ -291,6 +299,7 @@ class FlowsomWorker(QThread):
 
             self.finished.emit()
         except Exception as e:
+            print(traceback.format_exc())
             self.error.emit(str(e))
 
     def stop(self):
@@ -344,6 +353,7 @@ class FlowsomWindow(BaseClusteringWindow):
         self.init_label = QLabel("Initialize (init):")
         self.init_input = QComboBox()
         self.init_input.addItems(["True", "False"])
+        self.init_input.setCurrentText("False")
 
         self.initf_label = QLabel("Initf:")
         self.initf_input = QLineEdit()
@@ -399,6 +409,8 @@ class FlowsomWindow(BaseClusteringWindow):
             use_only_fluo = self.use_marker_dropdown.currentText() == "True"
             exclude_channels = self.exclude_channels_dropdown.currentText()
             scaling = self.scaling_dropdown.currentText()
+            if scaling == "None":
+                scaling = None
 
             # Collect advanced parameters with defaults
             advanced_kwargs = {
@@ -618,6 +630,8 @@ class ParcWindow(BaseClusteringWindow):
             use_only_fluo = self.use_marker_dropdown.currentText() == "True"
             exclude_channels = self.exclude_channels_dropdown.currentText()
             scaling = self.scaling_dropdown.currentText()
+            if scaling == "None":
+                scaling = None
 
             # Collect advanced parameters with defaults
             advanced_kwargs = {
@@ -840,6 +854,8 @@ class PhenographWindow(BaseClusteringWindow):
             use_only_fluo = self.use_marker_dropdown.currentText() == "True"
             exclude_channels = self.exclude_channels_dropdown.currentText()
             scaling = self.scaling_dropdown.currentText()
+            if scaling == "None":
+                scaling = None
 
             # Collect advanced parameters with defaults
             advanced_kwargs = {
