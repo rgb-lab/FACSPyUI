@@ -79,14 +79,14 @@ class PlotWindowSinglecellDimred(PlotWindowFunctionGeneric):
         }
         vmin = plot_config.get("vmin")
         vmax = plot_config.get("vmax")
-        color_scale = plot_config.get("color_scale")
+        # color_scale = plot_config.get("color_scale")
         scale_kwargs = {}
         if vmin:
             scale_kwargs["vmin"] = float(vmin)
         if vmax:
             scale_kwargs["vmax"] = float(vmax)
-        if color_scale:
-            scale_kwargs["color_scale"] = color_scale
+        # if color_scale:
+        #     scale_kwargs["color_scale"] = color_scale
 
         self._scale_kwargs = scale_kwargs
 
