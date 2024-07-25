@@ -25,33 +25,38 @@ class BaseExpressionWindow(BaseAnalysisMenu):
         # Data format
         self.data_format_label = QLabel("Data format:")
         self.data_format_dropdown = QComboBox()
-        self.form_layout.addRow(self.data_format_label, self.data_format_dropdown)
+        data_format_container = self.add_tooltip(self.data_format_dropdown, parameter = "data_format")
+        self.form_layout.addRow(self.data_format_label, data_format_container)
 
         # Group by
         self.group_by_label = QLabel("Group by:")
         self.group_by_dropdown = QComboBox()
-        self.form_layout.addRow(self.group_by_label, self.group_by_dropdown)
+        groupby_container = self.add_tooltip(self.group_by_dropdown, parameter = "group_by_fluo_metrics")
+        self.form_layout.addRow(self.group_by_label, groupby_container)
 
         # Aggregation method
         self.agg_method_label = QLabel("Aggregation method:")
         self.agg_method_dropdown = QComboBox()
         self.agg_method_dropdown.addItems(["median", "mean"])
         self.agg_method_dropdown.setCurrentText("median")
-        self.form_layout.addRow(self.agg_method_label, self.agg_method_dropdown)
+        agg_method_container = self.add_tooltip(self.agg_method_dropdown, parameter = "aggregation_method")
+        self.form_layout.addRow(self.agg_method_label, agg_method_container)
 
         # Use markers only
         self.use_markers_only_label = QLabel("Use markers only:")
         self.use_markers_only_dropdown = QComboBox()
         self.use_markers_only_dropdown.addItems(["True", "False"])
         self.use_markers_only_dropdown.setCurrentText("False")
-        self.form_layout.addRow(self.use_markers_only_label, self.use_markers_only_dropdown)
+        use_markers_only_container = self.add_tooltip(self.use_markers_only_dropdown, parameter = "use_markers_only")
+        self.form_layout.addRow(self.use_markers_only_label, use_markers_only_container)
 
         # Aggregate
         self.aggregate_label = QLabel("Aggregate:")
         self.aggregate_dropdown = QComboBox()
         self.aggregate_dropdown.addItems(["True", "False"])
         self.aggregate_dropdown.setCurrentText("False")
-        self.form_layout.addRow(self.aggregate_label, self.aggregate_dropdown)
+        aggregate_container = self.add_tooltip(self.aggregate_dropdown, parameter = "aggregate")
+        self.form_layout.addRow(self.aggregate_label, aggregate_container)
 
         # Advanced settings section
         self.advanced_settings_layout = QFormLayout()

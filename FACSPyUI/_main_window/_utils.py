@@ -1,9 +1,10 @@
 from PyQt5.QtWidgets import (QWidget, QHBoxLayout, QDialog,
                              QVBoxLayout, QListWidget, QListWidgetItem,
                              QDialogButtonBox, QLabel, QLineEdit,
-                             QPushButton, QSizePolicy)
+                             QPushButton, QSizePolicy, QToolTip)
 from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QMovie
+from PyQt5.QtGui import QMovie, QPixmap
+from PyQt5.QtSvg import QSvgWidget
 import os
 from ._paths import ICON_PATH as icon_dir
 from functools import wraps
@@ -84,16 +85,11 @@ class MultiSelectComboBox(QWidget):
 
 
     def initUI(self):
-        # Main layout for the widget
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(0, 0, 0, 0)
 
-        # Container widget to hold QLineEdit and QPushButton
         container_widget = QWidget(self)
-        # container_widget.setStyleSheet("border: 2px solid red;")
         container_layout = QHBoxLayout(container_widget)
-        container_layout.setContentsMargins(0, 0, 0, 0)
-        container_layout.setSpacing(5)
         
         self.line_edit = QLineEdit(container_widget)
         self.line_edit.setReadOnly(True)
@@ -101,11 +97,15 @@ class MultiSelectComboBox(QWidget):
         self.line_edit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         self.select_button = QPushButton("...", container_widget)
+        self.select_button.setContentsMargins(0,0,0,0)
         self.select_button.setFixedWidth(30)
+        self.select_button.setFixedHeight(self.line_edit.sizeHint().height())
         self.select_button.clicked.connect(self.show_selection_dialog)
         
         container_layout.addWidget(self.line_edit)
         container_layout.addWidget(self.select_button)
+        container_layout.setContentsMargins(0, 0, 0, 0)
+        container_layout.setSpacing(5)
 
         main_layout.addWidget(container_widget)
 
@@ -194,3 +194,42 @@ def error_handler(error_origin):
                 self.show_error(error_origin, str(e))
         return wrapper
     return decorator
+
+class HoverLabel(QLabel):
+    def __init__(self,
+                 dimension = 30,
+                 darkmode: bool = False,
+                 hover_info: str = "For further information refer to FACSPy documentation.",
+                 *args,
+                 **kwargs):
+        super().__init__(*args, **kwargs)
+        layout = QVBoxLayout()
+        if darkmode:
+            icon = os.path.join(icon_dir, "_info_dark.svg")
+        else:
+            icon = os.path.join(icon_dir, "_info_light.svg")
+        self.svg_widget = QSvgWidget(icon)
+        self.svg_widget.setFixedSize(dimension, dimension)
+        layout.addWidget(self.svg_widget)
+        layout.setContentsMargins(0,0,0,0)
+        layout.setSpacing(0)
+        self.setLayout(layout)
+        self.setFixedSize(dimension, dimension)
+
+        tooltip_text = f"""
+         <div style="width: 500px;">
+            {hover_info}
+        </div>
+        """
+        tooltip_text = self._parse_documentation(hover_info)
+        self.setToolTip(tooltip_text)
+        self.setMouseTracking(True)
+
+    def enterEvent(self, event):
+        QToolTip.showText(event.globalPos(), self.toolTip())
+        super().enterEvent(event)
+
+    def _parse_documentation(self, text):
+        text = "<p>" + text + "</p"
+        return text
+

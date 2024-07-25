@@ -57,6 +57,10 @@ class PlotWindowTransformationPlot(PlotWindowFunctionGeneric):
                 "show": False,
                 "return_fig": True,
         }
+        if not self._raw_config["sample_size"]:
+            self._raw_config["sample_size"] = 5000
+        else:
+            self._raw_config["sample_size"] = int(self._raw_config["sample_size"])
 
     def generate_matplotlib(self, plot_config):
         dataset = self.retrieve_dataset()

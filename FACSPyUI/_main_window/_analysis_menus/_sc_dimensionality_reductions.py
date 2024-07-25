@@ -14,56 +14,50 @@ class BaseDimensionalityReductionWindow(BaseAnalysisMenu):
     def __init__(self, main_window, title, advanced_params):
         super().__init__(main_window, title, advanced_params)
 
-        # Main layout
         self.main_layout = QVBoxLayout()
 
-        # Form layout for global options
         self.form_layout = QFormLayout()
         self.main_layout.addLayout(self.form_layout)
 
-        # Gate
         self.gate_label = QLabel("Gate:")
         self.gate_dropdown = QComboBox()
-        self.form_layout.addRow(self.gate_label, self.gate_dropdown)
+        gate_container = self.add_tooltip(self.gate_dropdown, parameter = "gate")
+        self.form_layout.addRow(self.gate_label, gate_container)
 
-        # Data format
         self.data_format_label = QLabel("Data format:")
         self.data_format_dropdown = QComboBox()
-        self.form_layout.addRow(self.data_format_label, self.data_format_dropdown)
+        data_format_container = self.add_tooltip(self.data_format_dropdown, parameter = "data_format")
+        self.form_layout.addRow(self.data_format_label, data_format_container) 
 
-        # Use marker channels only
         self.use_marker_label = QLabel("Use marker channels only:")
         self.use_marker_dropdown = QComboBox()
         self.use_marker_dropdown.addItems(["True", "False"])
-        self.form_layout.addRow(self.use_marker_label, self.use_marker_dropdown)
+        use_marker_container = self.add_tooltip(self.use_marker_dropdown, parameter = "use_markers_only")
+        self.form_layout.addRow(self.use_marker_label, use_marker_container)
 
-        # Exclude channels using MultiSelectComboBox
         self.exclude_channels_label = QLabel("Exclude channels:")
         self.exclude_channels_dropdown = MultiSelectComboBox()
-        self.form_layout.addRow(self.exclude_channels_label, self.exclude_channels_dropdown)
+        exclude_container = self.add_tooltip(self.exclude_channels_dropdown, parameter = "exclude")
+        self.form_layout.addRow(self.exclude_channels_label, exclude_container)
 
-        # Scaling
         self.scaling_label = QLabel("Scale data:")
         self.scaling_dropdown = QComboBox()
         self.scaling_dropdown.addItems(["MinMaxScaler", "StandardScaler", "RobustScaler", "None"])
-        self.form_layout.addRow(self.scaling_label, self.scaling_dropdown)
+        scaling_container = self.add_tooltip(self.scaling_dropdown, parameter = "scaling")
+        self.form_layout.addRow(self.scaling_label, scaling_container)
 
-        # Advanced settings checkbox
         self.advanced_settings_checkbox = QCheckBox("Show Advanced Settings")
         self.advanced_settings_checkbox.stateChanged.connect(self.toggle_advanced_settings)
         self.main_layout.addWidget(self.advanced_settings_checkbox)
 
-        # Advanced settings section
         self.advanced_settings_layout = QFormLayout()
         self.advanced_settings_group = QGroupBox("Advanced Settings")
         self.advanced_settings_group.setLayout(self.advanced_settings_layout)
         self.advanced_settings_group.setVisible(False)
         self.main_layout.addWidget(self.advanced_settings_group)
 
-        # Add advanced settings
         self.add_advanced_settings()
 
-        # Calculate button
         self.calculate_button = QPushButton(f"Calculate {title.split()[0]}")
         self.calculate_button.clicked.connect(self.calculate_dimensionality_reduction)
         self.main_layout.addWidget(self.calculate_button)

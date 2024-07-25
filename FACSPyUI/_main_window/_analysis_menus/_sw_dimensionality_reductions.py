@@ -25,29 +25,30 @@ class BaseSamplewiseDimensionalityReductionWindow(BaseAnalysisMenu):
         self.data_metric_label = QLabel("Data metric:")
         self.data_metric_dropdown = QComboBox()
         self.data_metric_dropdown.addItems(["mfi", "fop"])
-        self.form_layout.addRow(self.data_metric_label, self.data_metric_dropdown)
+        data_metric_container = self.add_tooltip(self.data_metric_dropdown, parameter = "data_metric")
+        self.form_layout.addRow(self.data_metric_label, data_metric_container)
 
-        # Data format
         self.data_format_label = QLabel("Data format:")
         self.data_format_dropdown = QComboBox()
-        self.form_layout.addRow(self.data_format_label, self.data_format_dropdown)
+        data_format_container = self.add_tooltip(self.data_format_dropdown, parameter = "data_format")
+        self.form_layout.addRow(self.data_format_label, data_format_container) 
 
-        # Use marker channels only
         self.use_marker_label = QLabel("Use marker channels only:")
         self.use_marker_dropdown = QComboBox()
         self.use_marker_dropdown.addItems(["True", "False"])
-        self.form_layout.addRow(self.use_marker_label, self.use_marker_dropdown)
+        use_marker_container = self.add_tooltip(self.use_marker_dropdown, parameter = "use_markers_only")
+        self.form_layout.addRow(self.use_marker_label, use_marker_container)
 
-        # Exclude channels
         self.exclude_channels_label = QLabel("Exclude channels:")
         self.exclude_channels_dropdown = MultiSelectComboBox()
-        self.form_layout.addRow(self.exclude_channels_label, self.exclude_channels_dropdown)
+        exclude_container = self.add_tooltip(self.exclude_channels_dropdown, parameter = "exclude")
+        self.form_layout.addRow(self.exclude_channels_label, exclude_container)
 
-        # Scaling
         self.scaling_label = QLabel("Scale data:")
         self.scaling_dropdown = QComboBox()
         self.scaling_dropdown.addItems(["MinMaxScaler", "StandardScaler", "RobustScaler", "None"])
-        self.form_layout.addRow(self.scaling_label, self.scaling_dropdown)
+        scaling_container = self.add_tooltip(self.scaling_dropdown, parameter = "scaling")
+        self.form_layout.addRow(self.scaling_label, scaling_container)
 
         # Advanced settings checkbox
         self.advanced_settings_checkbox = QCheckBox("Show Advanced Settings")

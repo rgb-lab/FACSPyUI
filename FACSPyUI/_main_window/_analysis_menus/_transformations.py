@@ -14,56 +14,46 @@ class BaseTransformationWindow(QWidget):
         self.setWindowTitle(title)
         self.default_kwargs = default_kwargs
 
-        # Create main layout
         self.main_layout = QVBoxLayout()
 
-        # Create a form layout to maintain consistent spacing
         self.form_layout = QFormLayout()
         self.main_layout.addLayout(self.form_layout)
 
-        # Data format dropdown
         self.data_format_label = QLabel("Select data to transform:")
         self.data_format_dropdown = QComboBox()
-        self.form_layout.addRow(self.data_format_label, self.data_format_dropdown)
+        data_format_container = self.add_tooltip(self.data_format_dropdown, parameter = "data_format")
+        self.form_layout.addRow(self.data_format_label, data_format_container)
 
-        # Transformed layer name input
         self.transformed_layer_label = QLabel("Select transformed layer name:")
         self.transformed_layer_input = QLineEdit()
-        self.form_layout.addRow(self.transformed_layer_label, self.transformed_layer_input)
+        transformed_layer_container = self.add_tooltip(self.transformed_layer_dropdown, parameter = "transformed_layer")
+        self.form_layout.addRow(self.transformed_layer_label, transformed_layer_container)
 
-        # Placeholder layout for subclass-specific widgets
         self.custom_layout = QHBoxLayout()
         self.main_layout.addLayout(self.custom_layout)
 
-        # Advanced settings checkbox
         self.advanced_settings_checkbox = QCheckBox("Show Advanced Settings")
         self.advanced_settings_checkbox.stateChanged.connect(self.toggle_advanced_settings)
         self.main_layout.addWidget(self.advanced_settings_checkbox)
 
-        # Advanced settings section
         self.advanced_settings_layout = QFormLayout()
         self.advanced_settings_group = QGroupBox("Advanced Settings")
         self.advanced_settings_group.setLayout(self.advanced_settings_layout)
         self.advanced_settings_group.setVisible(False)
         self.main_layout.addWidget(self.advanced_settings_group)
 
-        # Transform button
         self.transform_button = QPushButton("Transform Data")
         self.transform_button.clicked.connect(self.transform_data)
         self.main_layout.addWidget(self.transform_button)
 
         self.setLayout(self.main_layout)
 
-        # Populate the data format dropdown
         self.populate_data_format_dropdown()
 
-        # Adjust input sizes initially
         self.adjust_input_widths()
         
-        # Connect to adjust input sizes
         self.resizeEvent(None)
 
-        # Flag to ensure we only set the fixed size once
         self.fixed_size_set = False
 
         self.height_without_advanced_settings = self.sizeHint().height()

@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QComboBox, QLabel,
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QFont, QColor
 from PyQt5.QtCore import pyqtSignal
 from typing import Optional
-from .._utils import MultiSelectComboBox
+from .._utils import MultiSelectComboBox, HoverLabel
 
 CATEGORICAL_CMAPS = [
     "Set1", "Set2", "tab10", "Set3", "hls", "Paired"
@@ -271,6 +271,7 @@ class BaseConfigPanel(QWidget):
         self.main_layout.addWidget(self.scroll_area)
 
         self.setLayout(self.main_layout)
+        self.enable_documentation()
 
     def resize_window_for_additional_menus(self,
                                            height_increase,
@@ -365,7 +366,10 @@ class BaseConfigPanel(QWidget):
 
             if hasattr(self, 'sample_identifier_dropdown'):
                 self.sample_identifier_dropdown.clear()
-                self.sample_identifier_dropdown.addItems(dataset.obs["sample_ID"].unique().tolist())
+                self.sample_identifier_dropdown.addItems(
+                    dataset.obs["sample_ID"].unique().tolist() + 
+                    dataset.obs["file_name"].unique().tolist()
+                )
 
             if hasattr(self, 'scatter_dropdown'):
                 self.scatter_dropdown.clear()
@@ -569,56 +573,55 @@ class BaseConfigPanel(QWidget):
         return plot_config
 
 
-    def show_error(self, title, message):
-        """
-        Displays an error message in a QMessageBox.
-        """
-        error_dialog = QMessageBox(self)
-        error_dialog.setIcon(QMessageBox.Critical)
-        error_dialog.setWindowTitle(title)
-        error_dialog.setText(message)
-        error_dialog.exec_()
 
     def add_layer_input(self):
         self.layer_label = QLabel("Data format:")
         self.layer_dropdown = QComboBox()
-        self.form_layout.addRow(self.layer_label, self.layer_dropdown)
+        container = self.add_tooltip(self.layer_dropdown, parameter = "layer")
+        self.form_layout.addRow(self.layer_label, container)
 
     def add_gate_input(self):
         self.gate_label = QLabel("Select gate:")
         self.gate_dropdown = QComboBox()
-        self.form_layout.addRow(self.gate_label, self.gate_dropdown)
+        container = self.add_tooltip(self.gate_dropdown, parameter = "gate")
+        self.form_layout.addRow(self.gate_label, container)
 
     def add_sample_size_input(self):
         self.sample_size_label = QLabel("Subsample to:")
         self.sample_size_input = QLineEdit()
-        self.form_layout.addRow(self.sample_size_label, self.sample_size_input)
+        container = self.add_tooltip(self.sample_size_input, parameter = "sample_size")
+        self.form_layout.addRow(self.sample_size_label, container)
 
     def add_xchannel_input(self):
         self.xchannel_label = QLabel("Select x:")
         self.xchannel_dropdown = QComboBox()
-        self.form_layout.addRow(self.xchannel_label, self.xchannel_dropdown)
+        container = self.add_tooltip(self.xchannel_dropdown, parameter = "channel")
+        self.form_layout.addRow(self.xchannel_label, container)
 
     def add_ychannel_input(self):
         self.ychannel_label = QLabel("Select y:")
         self.ychannel_dropdown = QComboBox()
-        self.form_layout.addRow(self.ychannel_label, self.ychannel_dropdown)
+        container = self.add_tooltip(self.ychannel_dropdown, parameter = "channel")
+        self.form_layout.addRow(self.ychannel_label, container)
 
     def add_sample_identifier_input(self):
         self.sample_identifier_label = QLabel("Select sample:")
         self.sample_identifier_dropdown = QComboBox()
-        self.form_layout.addRow(self.sample_identifier_label, self.sample_identifier_dropdown)
+        container = self.add_tooltip(self.sample_identifier_dropdown, parameter = "sample_identifier")
+        self.form_layout.addRow(self.sample_identifier_label, container)
 
     def add_scatter_input(self):
         self.scatter_label = QLabel("Select Scatter:")
         self.scatter_dropdown = QComboBox()
-        self.form_layout.addRow(self.scatter_label, self.scatter_dropdown)
+        container = self.add_tooltip(self.scatter_dropdown, parameter = "scatter_channel")
+        self.form_layout.addRow(self.scatter_label, container)
 
     def add_cluster_key_input(self):
         self.cluster_key_label = QLabel("Select clusters:")
         self.cluster_key_dropdown = QComboBox()
         self.cluster_key_dropdown.currentIndexChanged.connect(self.update_cluster_selection_dropdown)
-        self.form_layout.addRow(self.cluster_key_label, self.cluster_key_dropdown)
+        container = self.add_tooltip(self.cluster_key_dropdown, parameter = "cluster_key")
+        self.form_layout.addRow(self.cluster_key_label, container)
 
     def update_cluster_selection_dropdown(self):
         if not hasattr(self, 'cluster_selection_dropdown'):
@@ -635,7 +638,8 @@ class BaseConfigPanel(QWidget):
     def add_cluster_selection_input(self):
         self.cluster_selection_label = QLabel("Select cluster to display:")
         self.cluster_selection_dropdown = QComboBox()
-        self.form_layout.addRow(self.cluster_selection_label, self.cluster_selection_dropdown)
+        container = self.add_tooltip(self.cluster_selection_dropdown, parameter = "cluster_selection")
+        self.form_layout.addRow(self.cluster_selection_label, container)
 
     def add_colorby_input(self,
                           additional_parameters: Optional[list[str]] = None):
@@ -645,19 +649,22 @@ class BaseConfigPanel(QWidget):
             self._additional_colorby = []
         self.colorby_label = QLabel("Select color:")
         self.colorby_dropdown = QComboBox()
-        self.form_layout.addRow(self.colorby_label, self.colorby_dropdown)
+        container = self.add_tooltip(self.colorby_dropdown, parameter = "colorby")
+        self.form_layout.addRow(self.colorby_label, container)
 
     def add_frequency_of_input(self):
         self.freq_of_gate_label = QLabel("Select parent:")
         self.freq_of_gate_dropdown = QComboBox()
-        self.form_layout.addRow(self.freq_of_gate_label, self.freq_of_gate_dropdown)
+        container = self.add_tooltip(self.freq_of_gate_dropdown, parameter = "freq_of")
+        self.form_layout.addRow(self.freq_of_gate_label, container)
 
     def add_groupby_fold_change_input(self,
                                       label: str = "Group by (x-axis)"):
         self.group_by_fold_change_label = QLabel(label)
         self.group_by_fold_change_dropdown = QComboBox()
         self.group_by_fold_change_dropdown.currentIndexChanged.connect(self.update_group_selection_dropdown)
-        self.form_layout.addRow(self.group_by_fold_change_label, self.group_by_fold_change_dropdown)
+        container = self.add_tooltip(self.group_by_fold_change_dropdown, parameter = "groupby")
+        self.form_layout.addRow(self.group_by_fold_change_label, container)
 
     def update_group_selection_dropdown(self):
         dataset_key = self.main_window.dataset_dropdown.currentText()
@@ -677,103 +684,121 @@ class BaseConfigPanel(QWidget):
     def add_group1_input(self):
         self.group1_label = QLabel("Select group 1:")
         self.group1_dropdown = QComboBox()
-        self.form_layout.addRow(self.group1_label, self.group1_dropdown)
+        container = self.add_tooltip(self.group1_dropdown, parameter = "group")
+        self.form_layout.addRow(self.group1_label, container)
 
     def add_group2_input(self):
         self.group2_label = QLabel("Select group 2:")
         self.group2_dropdown = QComboBox()
-        self.form_layout.addRow(self.group2_label, self.group2_dropdown)
+        container = self.add_tooltip(self.group2_dropdown, parameter = "group")
+        self.form_layout.addRow(self.group2_label, container)
     
     def add_marker_input(self):
         self.marker_label = QLabel("Select marker:")
         self.marker_dropdown = QComboBox()
-        self.form_layout.addRow(self.marker_label, self.marker_dropdown)
+        container = self.add_tooltip(self.marker_dropdown, parameter = "marker")
+        self.form_layout.addRow(self.marker_label, container)
 
     def add_metadata_marker_input(self):
         self.metadata_marker_label = QLabel("Select marker:")
         self.metadata_marker_dropdown = QComboBox()
-        self.form_layout.addRow(self.metadata_marker_label, self.metadata_marker_dropdown)
+        container = self.add_tooltip(self.metadata_marker_dropdown, parameter = "metadata_marker")
+        self.form_layout.addRow(self.metadata_marker_label, container)
 
     def add_groupby_input(self,
                           label: str = "Group by (x-axis)"):
         self.group_by_label = QLabel(label)
         self.group_by_dropdown = QComboBox()
-        self.form_layout.addRow(self.group_by_label, self.group_by_dropdown)
+        container = self.add_tooltip(self.group_by_dropdown, parameter = "groupby")
+        self.form_layout.addRow(self.group_by_label, container)
 
     def add_splitby_input(self):
         self.split_by_label = QLabel("Color by:")
         self.split_by_dropdown = QComboBox()
-        self.form_layout.addRow(self.split_by_label, self.split_by_dropdown)
+        container = self.add_tooltip(self.split_by_dropdown, parameter = "splitby")
+        self.form_layout.addRow(self.split_by_label, container)
 
     def add_stat_test_input(self):
         self.stat_test_label = QLabel("Stat test:")
         self.stat_test_dropdown = QComboBox()
         self.stat_test_dropdown.addItems(["Kruskal", "Wilcoxon", "None"])
-        self.form_layout.addRow(self.stat_test_label, self.stat_test_dropdown)
+        container = self.add_tooltip(self.stat_test_dropdown, parameter = "stat_test")
+        self.form_layout.addRow(self.stat_test_label, container)
 
     def add_ridge_input(self):
         self.ridge_label = QLabel("As ridgeplot:")
         self.ridge_dropdown = QComboBox()
         self.ridge_dropdown.addItems(["True", "False"])
-        self.form_layout.addRow(self.ridge_label, self.ridge_dropdown)
+        container = self.add_tooltip(self.ridge_dropdown, parameter = "ridge")
+        self.form_layout.addRow(self.ridge_label, container)
 
     def add_backend_input(self):
         self.backend_label = QLabel("Backend:")
         self.backend_dropdown = QComboBox()
         self.backend_dropdown.addItems(["matplotlib", "plotly"])
-        self.form_layout.addRow(self.backend_label, self.backend_dropdown)
+        container = self.add_tooltip(self.backend_dropdown, parameter = "backend")
+        self.form_layout.addRow(self.backend_label, container)
 
     def add_metadata_annotation_input(self):
         self.metadata_annotation_label = QLabel("Annotate metadata:")
         self.metadata_annotation_dropdown = MultiSelectComboBox()
-        self.form_layout.addRow(self.metadata_annotation_label, self.metadata_annotation_dropdown)
+        container = self.add_tooltip(self.metadata_annotation_dropdown, parameter = "metadata_annotation")
+        self.form_layout.addRow(self.metadata_annotation_label, container)
 
     def add_use_marker_input(self):
         self.use_marker_label = QLabel("Use marker channels only:")
         self.use_marker_dropdown = QComboBox()
         self.use_marker_dropdown.addItems(["True", "False"])
-        self.form_layout.addRow(self.use_marker_label, self.use_marker_dropdown)
+        container = self.add_tooltip(self.use_marker_dropdown, parameter = "use_markers_only")
+        self.form_layout.addRow(self.use_marker_label, container)
 
     def add_exclude_channels_input(self):
         self.exclude_channels_label = QLabel("Exclude channels:")
         self.exclude_channels_dropdown = MultiSelectComboBox()
-        self.form_layout.addRow(self.exclude_channels_label, self.exclude_channels_dropdown)
+        container = self.add_tooltip(self.exclude_channels_dropdown, parameter = "exclude")
+        self.form_layout.addRow(self.exclude_channels_label, container)
 
     def add_correlation_method_input(self):
         self.corr_method_label = QLabel("Correlation method:")
         self.corr_method_dropdown = QComboBox()
         self.corr_method_dropdown.addItems(["pearson", "spearman", "kendall"])
-        self.form_layout.addRow(self.corr_method_label, self.corr_method_dropdown)
+        container = self.add_tooltip(self.corr_method_dropdown, parameter = "corr_method")
+        self.form_layout.addRow(self.corr_method_label, container)
 
     def add_data_metric_input(self):
         self.data_metric_label = QLabel("Calculated on:")
         self.data_metric_dropdown = QComboBox()
         self.data_metric_dropdown.addItems(["mfi", "fop"])
-        self.form_layout.addRow(self.data_metric_label, self.data_metric_dropdown)
+        container = self.add_tooltip(self.data_metric_dropdown, parameter = "data_metric")
+        self.form_layout.addRow(self.data_metric_label, container)
 
     def add_normalize_input(self):
         self.normalize_label = QLabel("Normalize:")
         self.normalize_dropdown = QComboBox()
         self.normalize_dropdown.addItems(["True", "False"])
-        self.form_layout.addRow(self.normalize_label, self.normalize_dropdown)
+        container = self.add_tooltip(self.normalize_dropdown, parameter = "normalize")
+        self.form_layout.addRow(self.normalize_label, container)
 
     def add_cluster_method_input(self):
         self.cluster_method_label = QLabel("Cluster metric:")
         self.cluster_method_dropdown = QComboBox()
         self.cluster_method_dropdown.addItems(["correlation", "distance"])
-        self.form_layout.addRow(self.cluster_method_label, self.cluster_method_dropdown)
+        container = self.add_tooltip(self.cluster_method_dropdown, parameter = "cluster_method")
+        self.form_layout.addRow(self.cluster_method_label, container)
 
     def add_dimred_samplewise_input(self):
         self.samplewise_dimred_label = QLabel("Dimensionality Reduction:")
         self.samplewise_dimred_dropdown = QComboBox()
         self.samplewise_dimred_dropdown.addItems(["PCA", "MDS", "TSNE", "UMAP"])
-        self.form_layout.addRow(self.samplewise_dimred_label, self.samplewise_dimred_dropdown)
+        container = self.add_tooltip(self.samplewise_dimred_dropdown, parameter = "dimred")
+        self.form_layout.addRow(self.samplewise_dimred_label, container)
 
     def add_dimred_input(self):
         self.dimred_label = QLabel("Dimensionality Reduction:")
         self.dimred_dropdown = QComboBox()
         self.dimred_dropdown.addItems(["PCA", "DMAP", "TSNE", "UMAP"])
-        self.form_layout.addRow(self.dimred_label, self.dimred_dropdown)
+        container = self.add_tooltip(self.dimred_dropdown, parameter = "dimred")
+        self.form_layout.addRow(self.dimred_label, container)
 
     def add_data_parameters_label(self):
         data_parameters_label = QLabel("<b>Data Parameters</b>")
@@ -785,7 +810,8 @@ class BaseConfigPanel(QWidget):
         self.scaling_label = QLabel("Scale data:")
         self.scaling_dropdown = QComboBox()
         self.scaling_dropdown.addItems(["MinMaxScaler", "StandardScaler", "RobustScaler", "None"])
-        self.form_layout.addRow(self.scaling_label, self.scaling_dropdown)
+        container = self.add_tooltip(self.scaling_dropdown, parameter = "scaling")
+        self.form_layout.addRow(self.scaling_label, container)
 
     def add_buttons(self):
         self.render_button = QPushButton("Render\nPlot")
@@ -824,17 +850,20 @@ class BaseConfigPanel(QWidget):
         if show_title:
             self.title_label = QLabel("Title:")
             self.title_input = QLineEdit()
-            self.layout_parameters_layout.addRow(self.title_label, self.title_input)
+            title_container = self.add_tooltip(self.title_input, parameter = "plot_title")
+            self.layout_parameters_layout.addRow(self.title_label, title_container)
 
         if show_xlabel:
             self.xlabel_label = QLabel("X-axis label:")
             self.xlabel_input = QLineEdit()
-            self.layout_parameters_layout.addRow(self.xlabel_label, self.xlabel_input)
+            xlabel_container = self.add_tooltip(self.xlabel_input, parameter = "plot_axis_label")
+            self.layout_parameters_layout.addRow(self.xlabel_label, xlabel_container)
 
         if show_ylabel:
             self.ylabel_label = QLabel("Y-axis label:")
             self.ylabel_input = QLineEdit()
-            self.layout_parameters_layout.addRow(self.ylabel_label, self.ylabel_input)
+            ylabel_container = self.add_tooltip(self.ylabel_input, parameter = "plot_axis_label")
+            self.layout_parameters_layout.addRow(self.ylabel_label, ylabel_container)
 
         self.scroll_layout.addWidget(self.layout_parameters_group)
 
@@ -861,31 +890,36 @@ class BaseConfigPanel(QWidget):
         if show_title:
             self.title_fontsize_label = QLabel("Title font size:")
             self.title_fontsize_input = QLineEdit()
-            self.fontsize_parameters_layout.addRow(self.title_fontsize_label, self.title_fontsize_input)
+            title_container = self.add_tooltip(self.title_fontsize_input, parameter = "title_fontsize")
+            self.fontsize_parameters_layout.addRow(self.title_fontsize_label, title_container)
 
         # X-axis label font size
         if show_xlabel:
             self.xlabel_fontsize_label = QLabel("X label font size:")
             self.xlabel_fontsize_input = QLineEdit()
-            self.fontsize_parameters_layout.addRow(self.xlabel_fontsize_label, self.xlabel_fontsize_input)
+            xlabel_container = self.add_tooltip(self.xlabel_fontsize_input, parameter = "axis_label_fontsize")
+            self.fontsize_parameters_layout.addRow(self.xlabel_fontsize_label, xlabel_container)
 
         # Y-axis label font size
         if show_ylabel:
             self.ylabel_fontsize_label = QLabel("Y label font size:")
             self.ylabel_fontsize_input = QLineEdit()
-            self.fontsize_parameters_layout.addRow(self.ylabel_fontsize_label, self.ylabel_fontsize_input)
+            ylabel_container = self.add_tooltip(self.ylabel_fontsize_input, parameter = "axis_label_fontsize")
+            self.fontsize_parameters_layout.addRow(self.ylabel_fontsize_label, ylabel_container)
 
         # X tick labels font size
         if show_xticklabel:
             self.xticklabels_fontsize_label = QLabel("X tick labels font size:")
             self.xticklabels_fontsize_input = QLineEdit()
-            self.fontsize_parameters_layout.addRow(self.xticklabels_fontsize_label, self.xticklabels_fontsize_input)
+            xticklabel_container = self.add_tooltip(self.xticklabels_fontsize_input, parameter = "axis_ticklabel_fontsize")
+            self.fontsize_parameters_layout.addRow(self.xticklabels_fontsize_label, xticklabel_container)
 
         # Y tick labels font size
         if show_yticklabel:
             self.yticklabels_fontsize_label = QLabel("Y tick labels font size:")
             self.yticklabels_fontsize_input = QLineEdit()
-            self.fontsize_parameters_layout.addRow(self.yticklabels_fontsize_label, self.yticklabels_fontsize_input)
+            yticklabel_container = self.add_tooltip(self.yticklabels_fontsize_input, parameter = "axis_ticklabel_fontsize")
+            self.fontsize_parameters_layout.addRow(self.yticklabels_fontsize_label, yticklabel_container)
 
     def add_dot_parameters(self,
                            label: str = "Show Dot Parameters",
@@ -909,23 +943,27 @@ class BaseConfigPanel(QWidget):
         if show_dot_size:
             self.dot_size_label = QLabel("Dot size:")
             self.dot_size_input = QLineEdit()
-            self.dot_parameters_layout.addRow(self.dot_size_label, self.dot_size_input)
+            dot_size_container = self.add_tooltip(self.dot_size_input, parameter = "dotsize")
+            self.dot_parameters_layout.addRow(self.dot_size_label, dot_size_container)
 
         if show_linewidth:
             self.dot_linewidth_label = QLabel("Linewidth:")
             self.dot_linewidth_input = QLineEdit()
-            self.dot_parameters_layout.addRow(self.dot_linewidth_label, self.dot_linewidth_input)
+            dot_linewidth_container = self.add_tooltip(self.dot_linewidth_input, parameter = "dot_linewidth")
+            self.dot_parameters_layout.addRow(self.dot_linewidth_label, dot_linewidth_container)
 
         if show_linecolor:
             self.dot_linecolor_label = QLabel("Linecolor:")
             self.dot_linecolor_input = QLineEdit()
-            self.dot_parameters_layout.addRow(self.dot_linecolor_label, self.dot_linecolor_input)
+            dot_linecolor_container = self.add_tooltip(self.dot_linecolor_input , parameter = "dot_linecolor")
+            self.dot_parameters_layout.addRow(self.dot_linecolor_label, dot_linecolor_container)
 
         if show_cmap:
             self.colormap_label = QLabel("Colormap:")
             self.colormap_dropdown = QComboBox()
             self.colormap_dropdown.addItems(CATEGORICAL_CMAPS + CONTINUOUS_CMAPS)
-            self.dot_parameters_layout.addRow(self.colormap_label, self.colormap_dropdown)
+            cmap_container = self.add_tooltip(self.colormap_dropdown, parameter = "cmap")
+            self.dot_parameters_layout.addRow(self.colormap_label, cmap_container)
 
     def add_aspect_parameters(self):
         """
@@ -944,17 +982,20 @@ class BaseConfigPanel(QWidget):
         # Plot Height
         self.plot_height_label = QLabel("Plot Height:")
         self.plot_height_input = QLineEdit()
-        self.aspect_parameters_layout.addRow(self.plot_height_label, self.plot_height_input)
+        plot_height_container = self.add_tooltip(self.plot_height_input, parameter = "plot_height")
+        self.aspect_parameters_layout.addRow(self.plot_height_label, plot_height_container)
 
         # Plot Aspect
         self.plot_aspect_label = QLabel("Plot Aspect:")
         self.plot_aspect_input = QLineEdit()
-        self.aspect_parameters_layout.addRow(self.plot_aspect_label, self.plot_aspect_input)
+        plot_aspect_container = self.add_tooltip(self.plot_aspect_input, parameter = "plot_aspect")
+        self.aspect_parameters_layout.addRow(self.plot_aspect_label, plot_aspect_container)
 
         # Plot Spacing
         self.plot_spacing_label = QLabel("Plot Spacing:")
         self.plot_spacing_input = QLineEdit()
-        self.aspect_parameters_layout.addRow(self.plot_spacing_label, self.plot_spacing_input)
+        plot_spacing_container = self.add_tooltip(self.plot_spacing_input, parameter = "plot_spacing")
+        self.aspect_parameters_layout.addRow(self.plot_spacing_label, plot_spacing_container)
 
     def add_xscale_parameters(self):
         """
@@ -972,7 +1013,8 @@ class BaseConfigPanel(QWidget):
 
         self.xscale_label = QLabel("Scale:")
         self.xscale_dropdown = QComboBox()
-        self.xscale_parameters_layout.addRow(self.xscale_label, self.xscale_dropdown)
+        container = self.add_tooltip(self.xscale_dropdown, parameter = "axis_scale")
+        self.xscale_parameters_layout.addRow(self.xscale_label, container)
 
     def add_yscale_parameters(self):
         """
@@ -988,10 +1030,10 @@ class BaseConfigPanel(QWidget):
         self.yscale_parameters_group.setVisible(False)
         self.scroll_layout.addWidget(self.yscale_parameters_group)
 
-        # Dot size
         self.yscale_label = QLabel("Scale:")
         self.yscale_dropdown = QComboBox()
-        self.yscale_parameters_layout.addRow(self.yscale_label, self.yscale_dropdown)
+        container = self.add_tooltip(self.yscale_dropdown, parameter = "axis_scale")
+        self.yscale_parameters_layout.addRow(self.yscale_label, container)
 
     def add_colorscale_parameters(self,
                                   show_scale: bool = True,
@@ -1013,31 +1055,36 @@ class BaseConfigPanel(QWidget):
         if show_scale:
             self.colorscale_label = QLabel("Scale:")
             self.colorscale_dropdown = QComboBox()
-            self.colorscale_parameters_layout.addRow(self.colorscale_label, self.colorscale_dropdown)
+            colorscale_container = self.add_tooltip(self.colorscale_dropdown, parameter = "color_scale")
+            self.colorscale_parameters_layout.addRow(self.colorscale_label, colorscale_container)
 
         # VMIN
         if show_vmin:
             self.vmin_label = QLabel("vmin:")
             self.vmin_input = QLineEdit()
-            self.colorscale_parameters_layout.addRow(self.vmin_label, self.vmin_input)
+            vmin_container = self.add_tooltip(self.vmin_input, parameter = "vmin")
+            self.colorscale_parameters_layout.addRow(self.vmin_label, vmin_container)
 
         # VMAX
         if show_vmax:
             self.vmax_label = QLabel("vmax:")
             self.vmax_input = QLineEdit()
-            self.colorscale_parameters_layout.addRow(self.vmax_label, self.vmax_input)
+            vmax_container = self.add_tooltip(self.vmax_input, parameter = "vmax")
+            self.colorscale_parameters_layout.addRow(self.vmax_label, vmax_container)
         
     def add_continous_cmaps_input(self):
         self.continuous_colormap_label = QLabel("Colormap:")
         self.continuous_colormap_dropdown = QComboBox()
         self.continuous_colormap_dropdown.addItems(CONTINUOUS_CMAPS)
-        self.form_layout.addRow(self.continuous_colormap_label, self.continuous_colormap_dropdown)
+        container = self.add_tooltip(self.continuous_colormap_dropdown, parameter = "cmap")
+        self.form_layout.addRow(self.continuous_colormap_label, container)
 
     def add_full_cmaps_input(self):
         self.full_colormap_label = QLabel("Colormap:")
         self.full_colormap_dropdown = QComboBox()
         self.full_colormap_dropdown.addItems(CATEGORICAL_CMAPS + CONTINUOUS_CMAPS)
-        self.form_layout.addRow(self.full_colormap_label, self.full_colormap_dropdown)
+        container = self.add_tooltip(self.full_colormap_dropdown, parameter = "cmap")
+        self.form_layout.addRow(self.full_colormap_label, container)
 
     def toggle_layout_parameters(self):
         """
@@ -1129,12 +1176,165 @@ class BaseConfigPanel(QWidget):
         else:
             self.show_error_dialog("Saving of the raw data was not successful.")
 
+    def show_error(self, title, message):
+        """
+        Displays an error message in a QMessageBox.
+        """
+        error_dialog = QMessageBox(self)
+        error_dialog.setStyleSheet(self.main_window.stylesheet)
+        error_dialog.setIcon(QMessageBox.Critical)
+        error_dialog.setWindowTitle(title)
+        error_dialog.setText(message)
+        error_dialog.exec_()
+
     def show_error_dialog(self, message):
         """
         Displays an error dialog with the provided message.
         """
         error_dialog = QMessageBox(self)
+        error_dialog.setStyleSheet(self.main_window.stylesheet)
         error_dialog.setIcon(QMessageBox.Critical)
         error_dialog.setWindowTitle("Error")
         error_dialog.setText(message)
         error_dialog.exec_()
+
+    def add_tooltip(self,
+                    widget: QWidget,
+                    parameter: str) -> QHBoxLayout:
+        tooltip = HoverLabel(
+            dimension = widget.sizeHint().height(),
+            hover_info = self._documentation[parameter],
+            darkmode = self.main_window.is_dark
+        )
+        container = QWidget()
+        container_layout = QHBoxLayout()
+        container_layout.addWidget(widget)
+        container_layout.addWidget(tooltip)
+        container_layout.setContentsMargins(0,0,0,0)
+        container_layout.setSpacing(10)
+        container.setLayout(container_layout)
+
+        return container
+
+    def enable_documentation(self):
+        self._documentation = {
+            "gate":
+                "Specify the population that is used for the plot.",
+            "layer":
+                "Specify the data to be plotted.",
+            "sample_size":
+                "Specify how many events you want to plot.",
+            "channel":
+                "Specify the channel to be plotted.",
+            "sample_identifier":
+                "Choose the sample_ID or file_name that corresponds to the " +
+                "sample you want to plot.",
+            "scatter_channel":
+                "Specify which channel should be plotted on the y-axis.",
+            "cluster_key":
+                "Specifies the name of the cluster annotations.",
+            "cluster_selection":
+                "Specify which cluster you want to use to display data from.",
+            "colorby":
+                "Choose the coloring of the plot.",
+            "freq_of":
+                "Choose the parent gate of which the frequency is calculated.",
+            "groupby":
+                "Choose the grouping to be analyzed.",
+            "group":
+                "Choose a group that should be compared against.",
+            "marker":
+                "Specify the channel that is displayed.",
+            "metadata_marker":
+                "Specify the channel that is displayed. It must be a numeric variable.",
+            "splitby":
+                "Choose the variable to split the plot by. Can be the same as " +
+                "'groupby', in which case only the 'groupby' variable will be " +
+                "used on the x-axis.",
+            "stat_test":
+                "Specify the statistical test that is applied and displayed. If " +
+                "set to 'None', no statistical analysis will be performed.",
+            "ridge":
+                "If True, the plot will be displayed as an overlaying ridge-plot " +
+                "instead of a line plot.",
+            "backend":
+                "Plots will be rendered according to the backend. matplotlib offers " +
+                "publication-ready, high resolution plots, while plotly allows " +
+                "for interactive visualization of the metadata on the respective " +
+                "data points.",
+            "metadata_annotation":
+                "Specify which metadata are used for the column annotation. The " +
+                "entries will be colorcoded and displayed as small bars adjacent " +
+                "to the columns of the heatmap.",
+            "use_markers_only":
+                "If set to True, the display will only be applied to " +
+                "channels that contain marker proteins. This will exclude " +
+                "channels such as 'FSC', 'SSC' or technical channels in " +
+                "CyTOF.",
+            "exclude":
+                "Specify channels that are excluded from the plotting. This " +
+                "could be a live/dead stain or other uninformative markers. ",
+            "corr_method":
+                "Specify the method of correlation of the data. Can be 'pearson' " +
+                "'spearman' or 'kendall'.",
+            "data_metric":
+                "Specifies whether to show the intensity values " +
+                "(mfi) or the frequency of positives (fop).",
+            "normalize":
+                "Normalization will scale the data between 0 and 1 and display " +
+                "them as a percentage, while no " +
+                "normalization will display the raw counts.",
+            "cluster_method":
+                "The method used to cluster the heatmap data. If clustered by " +
+                "'correlation', the correlation coefficients will be used. If " +
+                "'distance', the euclidean distance of the samples will be used",
+            "dimred":
+                "Specify the dimensionality reduction to be displayed.",
+            "scaling":
+                "Controls whether to apply scaling to the plot data. 'MinMaxScaler' " +
+                "scales the data between 0 and 1, while  StandardScaler performs " +
+                "Z-scaling. For further information refer to the scikit-learn documentation. ",
+            "plot_title":
+                "Enter the plot title to be displayed.",
+            "plot_axis_label":
+                "Enter the axis label to be displayed.",
+            "title_fontsize":
+                "Enter the fontsize to control the label height of the title.",
+            "axis_label_fontsize":
+                "Enter the fontsize to control the label height of the axis label.",
+            "axis_ticklabel_fontsize":
+                "Enter the fontsize to control the label height of the individual tick labels.",
+            "dotsize":
+                "Controls the size of the data points.",
+            "dot_linewidth":
+                "Controls the thickness of the line surrounding the data points.",
+            "dot_linecolor":
+                "Controls the color of the line surrounding the data points.",
+            "cmap":
+                "Choose the colormap to use. There are categorical and continuous colormaps " +
+                "that have to be specified based on the coloring variable you chose. The " +
+                "categorical colormaps are 'Set1', 'Set2', 'Set3', 'tab10', 'Paired' and 'hls' " +
+                "while the other ones are continuous.",
+            "plot_height":
+                "Controls the height of the total plot. Use in conjunction with 'aspect' to " +
+                "control the overlap of the individual ridges. ",
+            "plot_aspect":
+                "Controls the aspect of the total plot. Use in conjunction with 'height' to " +
+                "control the overlap of the individual ridges. ",
+            "plot_spacing":
+                "Controls the spacing of the individual plots. Use in conjunction with 'height' to " +
+                "control the overlap of the individual ridges. ",
+            "axis_scale":
+                "Controls the scaling of the axis. Can be 'linear', 'log' or 'biex'. In the " +
+                "latter case, the axis will have a linear region and a log region.",
+            "color_scale":
+                "Controls the scale of the color bar. Can be 'linear', 'log' or 'biex'. In the " +
+                "latter case, the axis will have a linear region and a log region.",
+            "vmin":
+                "Sets the lowest intensity value to be displayed on the colorscale.",
+            "vmax":
+                "Sets the highest intensity value to be displayed on the colorscale.",
+
+        }
+
+

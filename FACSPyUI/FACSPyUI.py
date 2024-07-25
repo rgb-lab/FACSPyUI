@@ -80,7 +80,7 @@ def main():
 
             self.light_stylesheet = light_stylesheet
             self.dark_stylesheet = dark_stylesheet
-            self.stylesheet = self.light_stylesheet
+            self.set_style_sheet(which = "light")
 
             DATASHACK = {
                 "mouse_lineages": fp.read_dataset(data_path, "mouse_lineages_downsampled.h5ad")
@@ -106,9 +106,11 @@ def main():
         def get_style_sheet(self,
                             which: Literal["light", "dark"]):
             if which == "light":
+                self.is_dark = False
                 return self.light_stylesheet
             else:
                 assert which == "dark"
+                self.is_dark = True
                 return self.dark_stylesheet
 
         def set_style_sheet(self,

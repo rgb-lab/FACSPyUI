@@ -1,10 +1,11 @@
 from PyQt5.QtWidgets import (QMessageBox, QWidget, 
                              QPushButton, QLabel,
-                             QLineEdit, QComboBox)
+                             QLineEdit, QComboBox,
+                             QHBoxLayout)
 from PyQt5.QtCore import Qt
 
 
-from .._utils import MultiSelectComboBox
+from .._utils import MultiSelectComboBox, HoverLabel
 
 class BaseAnalysisMenu(QWidget):
     def __init__(self, main_window, title, advanced_params):
@@ -13,6 +14,7 @@ class BaseAnalysisMenu(QWidget):
         self.setStyleSheet(self.main_window.stylesheet)
         self.setWindowTitle(title)
         self.advanced_params = advanced_params
+        self.enable_documentation()
 
     def finalize_window_layout(self):
         # Populate dropdowns
@@ -97,4 +99,70 @@ class BaseAnalysisMenu(QWidget):
         error_dialog.setWindowTitle(title)
         error_dialog.setText(message)
         error_dialog.exec_()
+
+    def add_tooltip(self,
+                    widget: QWidget,
+                    parameter: str) -> QHBoxLayout:
+        tooltip = HoverLabel(
+            dimension = widget.sizeHint().height(),
+            hover_info = self._documentation[parameter],
+            darkmode = self.main_window.is_dark
+        )
+        container = QWidget()
+        container_layout = QHBoxLayout()
+        container_layout.addWidget(widget)
+        container_layout.addWidget(tooltip)
+        container_layout.setContentsMargins(0,0,0,0)
+        container_layout.setSpacing(10)
+        container.setLayout(container_layout)
+
+        return container
+
+    def enable_documentation(self):
+        self._documentation = {
+            "data_format": "Choose the data to be used for calculation.",
+            "group_by_fluo_metrics":
+                "Select a grouping. Usually, you want to use 'sample_ID' " +
+                "in order to obtain the metric per sample. The grouping " +
+                "for your variable of interest will then be performed by " +
+                "the plot.",
+            "aggregation_method":
+                "Defines whether to use the 'median fluorescence intensity' " +
+                "or the 'mean fluorescence intensity'",
+            "use_markers_only":
+                "If set to True, the calculations will only be applied to " +
+                "channels that contain marker proteins. This will exclude " +
+                "channels such as 'FSC', 'SSC' or technical channels in " +
+                "CyTOF.",
+            "aggregate":
+                "If the groupby parameter is not set to sample_ID, this " +
+                "option controls if you want to calculate the metric on " +
+                "your groupby variable AND 'sample_ID' or just by your " +
+                "groupby variable. Statistics are usually only possible " +
+                "when set to False. For the cluster heatmap for instance " +
+                "use 'aggregate = True' in order to display the intensities " +
+                "per cluster and not per cluster and 'sample_ID'.",
+            "cutoff":
+                "Determines what numerical cutoff to be used. The intensity " +
+                "values above the cutoff will be counted as positive, while " +
+                "the intensity values below the cutoff are counted as negative. " +
+                "Defaults to 'use cofactors', in which case the channel-specific " +
+                "cofactors will be used. Can be any float, otherwise.",
+            "gate":
+                "Specify the population that is used for the calculation.",
+            "exclude":
+                "Specify channels that are excluded from the calculation. This " +
+                "could be a live/dead stain or other uninformative markers. " +
+                "The inclusion of Scatter- and technical channels is controlled " +
+                "via the 'use marker channels only' option.",
+            "scaling":
+                "Controls whether to apply scaling to the input data. 'MinMaxScaler' " +
+                "scales the data between 0 and 1, while  StandardScaler performs " +
+                "Z-scaling. For further information refer to the scikit-learn documentation. ",
+            "data_metric":
+                "Specifies whether to calculate the reduction on the intensity values " +
+                "(mfi) or the frequency of positives (fop)."
+
+        }
+
 

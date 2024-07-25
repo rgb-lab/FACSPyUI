@@ -21,7 +21,7 @@ class ConfigPanelMarkerCorrelation(BaseConfigPanel):
         self.add_use_marker_input()
         self.add_exclude_channels_input()
 
-        self.add_scaling_input()
+        # self.add_scaling_input()
 
         self.add_correlation_method_input()
 

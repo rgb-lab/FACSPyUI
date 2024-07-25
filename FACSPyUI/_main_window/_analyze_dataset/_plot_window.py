@@ -290,6 +290,7 @@ class PlotWindowFunctionGeneric(QWidget):
         Shows an error dialog with the provided message.
         """
         error_dialog = QErrorMessage(self)
+        error_dialog.setStyleSheet(self.main_window.stylesheet)
         error_dialog.showMessage(message)
         error_dialog.exec_()
 
