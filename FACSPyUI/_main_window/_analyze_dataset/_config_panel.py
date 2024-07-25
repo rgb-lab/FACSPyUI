@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QComboBox, QLabel,
                              QHBoxLayout, QPushButton, QGroupBox,
                              QMessageBox, QScrollArea, QLineEdit, QCheckBox,
-                             QFormLayout, QSizePolicy)
+                             QFormLayout)
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QFont, QColor
 from PyQt5.QtCore import pyqtSignal
 from typing import Optional
@@ -288,43 +288,10 @@ class BaseConfigPanel(QWidget):
         except Exception as e:
             self.show_error("Render Plot Error", str(e))
 
-    def adjust_input_sizes(self):
-        """
-        Adjust widths of input fields, labels, and buttons based on the current window size.
-        """
-        adjustment_factor = 0.9
-        total_width = self.scroll_area.width() * adjustment_factor
-
-        # Find the maximum width of the labels
-        labels = self.findChildren(QLabel)
-        max_label_width = max(label.sizeHint().width() for label in labels)
-        max_label_width = int(max_label_width * 1.1)
-
-        input_width = int(total_width - max_label_width)
-        button_width = int(total_width * 0.3)
-
-        def set_size_policy(widget, width):
-            if isinstance(widget, (QLineEdit, QComboBox, QPushButton, QLabel, QGroupBox)) \
-                    and not isinstance(widget.parent(), MultiSelectComboBox):
-                widget.setFixedWidth(width)
-
-        for widget in self.findChildren(QLabel):
-            set_size_policy(widget, max_label_width)
-
-        for widget in self.findChildren(QComboBox):
-            set_size_policy(widget, input_width)
-
-        for widget in self.findChildren(QLineEdit):
-            set_size_policy(widget, input_width)
-
-        for widget in self.findChildren(QPushButton):
-            set_size_policy(widget, button_width)
-
     def resizeEvent(self, event):
         """
         Adjust input sizes when the window is resized.
         """
-        self.adjust_input_sizes()
         super().resizeEvent(event)
 
     def populate_dropdowns(self):

@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import (QWidget, QHBoxLayout, QDialog,
                              QVBoxLayout, QListWidget, QListWidgetItem,
                              QDialogButtonBox, QLabel, QLineEdit,
-                             QPushButton)
+                             QPushButton, QSizePolicy)
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QMovie
 import os
@@ -55,10 +55,17 @@ class LoadingScreen(QWidget):
         self.close()
 
 class MultiSelectComboBox(QWidget):
-    selection_changed = pyqtSignal(list)  # Signal emitted when selection changes
+    selection_changed = pyqtSignal(list)
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.initUI()
+
+        self.items = []
+        self.selected_items = []
+        self.current_items_text = ""
+
+    def old_layout(self):
         self.setLayout(QHBoxLayout(self))
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(0)
@@ -72,13 +79,35 @@ class MultiSelectComboBox(QWidget):
         # Create a button to open the selection dialog
         self.select_button = QPushButton("...", self)
         self.select_button.setFixedWidth(30)
-        self.select_button.setFixedHeight(self.line_edit.height())
         self.select_button.clicked.connect(self.show_selection_dialog)
         self.layout().addWidget(self.select_button)
 
-        self.items = []
-        self.selected_items = []
-        self.current_items_text = ""
+
+    def initUI(self):
+        # Main layout for the widget
+        main_layout = QVBoxLayout(self)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+
+        # Container widget to hold QLineEdit and QPushButton
+        container_widget = QWidget(self)
+        # container_widget.setStyleSheet("border: 2px solid red;")
+        container_layout = QHBoxLayout(container_widget)
+        container_layout.setContentsMargins(0, 0, 0, 0)
+        container_layout.setSpacing(5)
+        
+        self.line_edit = QLineEdit(container_widget)
+        self.line_edit.setReadOnly(True)
+        self.line_edit.setPlaceholderText("Select multiple values")
+        self.line_edit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+
+        self.select_button = QPushButton("...", container_widget)
+        self.select_button.setFixedWidth(30)
+        self.select_button.clicked.connect(self.show_selection_dialog)
+        
+        container_layout.addWidget(self.line_edit)
+        container_layout.addWidget(self.select_button)
+
+        main_layout.addWidget(container_widget)
 
     def addItems(self, items):
         """
