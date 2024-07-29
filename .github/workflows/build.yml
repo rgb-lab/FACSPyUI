@@ -28,7 +28,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install git+https://github.com/TarikExner/FACSPy@main
+        pip install git+https://github.com/rgb-lab/FACSPy@main
         pip install pyqt5 plotly pyinstaller PyQtWebEngine
         pip install --upgrade pyinstaller
 
