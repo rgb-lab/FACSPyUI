@@ -33,7 +33,7 @@ Note that currently you have to be in the same directory.
 
 In order to build it yourself, navigate to the directory and run:
 ```shell
->>> pyinstaller app.spec
+>>> pyinstaller FACSPyUI.spec
 ```
 
 If that doesnt work due to a command-not-found, reinstall pyinstaller with:
