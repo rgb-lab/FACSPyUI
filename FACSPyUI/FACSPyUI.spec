@@ -8,7 +8,7 @@ datas = [
     ('_datasets/*', '_datasets/'),
     ('_icons/*', '_icons/'),
     ('_stylesheets/*', '_stylesheets/'),
-    ('_main_window/*', 'main_window')
+    ('_main_window/*', '_main_window')
 ]
 datas += copy_metadata('scanpy', recursive=True)
 
@@ -25,6 +25,7 @@ def collect_hidden_imports(dir_path, package_name):
 hiddenimports = []
 hiddenimports += collect_hidden_imports('_stylesheets', '_stylesheets')
 hiddenimports += collect_hidden_imports('_main_window', '_main_window')
+
 
 a = Analysis(
     ['FACSPyUI.py'],
@@ -44,27 +45,20 @@ pyz = PYZ(a.pure)
 exe = EXE(
     pyz,
     a.scripts,
+    a.binaries,
+    a.datas,
     [],
-    exclude_binaries=True,
     name='FACSPyUI',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
-    upx=False,
+    upx=True,
+    upx_exclude=[],
+    runtime_tmpdir=None,
     console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    onefile=False
-)
-coll = COLLECT(
-    exe,
-    a.binaries,
-    a.datas,
-    strip=False,
-    upx=False,
-    upx_exclude=[],
-    name='FACSPyUI',
 )

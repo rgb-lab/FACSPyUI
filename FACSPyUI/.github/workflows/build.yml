@@ -1,0 +1,141 @@
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['windows-latest', 'ubuntu-latest', 'macos-latest']
+
+    outputs:
+      os: ${{ matrix.os }}
+      artifact_name: ${{ matrix.os }}
+      tag_name: ${{ github.ref }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        pip install git+https://github.com/TarikExner/FACSPy@main
+        pip install pyqt5 plotly pyinstaller PyQtWebEngine
+        pip install --upgrade pyinstaller
+
+    - name: Build with PyInstaller
+      run: pyinstaller FACSPyUI/FACSPyUI.spec
+
+    - name: Create executables directory and copy files
+      run: |
+        mkdir -p executables
+        cp -r dist/* executables/
+        echo "Contents of executables directory:"
+        ls -R executables
+
+    - name: Zip executables for Windows
+      if: matrix.os == 'windows-latest'
+      run: |
+        powershell.exe Compress-Archive -Path executables\* -DestinationPath executables\FACSPyUI_windows-latest.zip
+
+    - name: Zip executables for Unix-based systems
+      if: matrix.os != 'windows-latest'
+      run: |
+        zip -r executables/FACSPyUI_${{ matrix.os }}.zip executables/*
+
+    - name: Upload artifact for Windows
+      if: matrix.os == 'windows-latest'
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-artifacts-windows-latest
+        path: executables/FACSPyUI_windows-latest.zip
+
+    - name: Upload artifact for Unix-based systems
+      if: matrix.os != 'windows-latest'
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-artifacts-${{ matrix.os }}
+        path: executables/FACSPyUI_${{ matrix.os }}.zip
+
+    - name: Print uploaded artifact URL
+      run: |
+        echo "Artifact uploaded. Download it from:"
+        echo "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+  aggregate:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        token: ${{ secrets.PAT }}
+
+    - name: Download artifact for Windows
+      uses: actions/download-artifact@v2
+      with:
+        name: build-artifacts-windows-latest
+        path: ./executables
+
+    - name: Download artifact for Ubuntu
+      uses: actions/download-artifact@v2
+      with:
+        name: build-artifacts-ubuntu-latest
+        path: ./executables
+
+    - name: Download artifact for macOS
+      uses: actions/download-artifact@v2
+      with:
+        name: build-artifacts-macos-latest
+        path: ./executables
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: 'Release ${{ github.ref }}'
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Assets for Windows
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./executables/FACSPyUI_windows-latest.zip
+        asset_name: FACSPyUI_windows-latest.zip
+        asset_content_type: application/zip
+
+    - name: Upload Release Assets for Ubuntu
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./executables/FACSPyUI_ubuntu-latest.zip
+        asset_name: FACSPyUI_ubuntu-latest.zip
+        asset_content_type: application/zip
+
+    - name: Upload Release Assets for macOS
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./executables/FACSPyUI_macos-latest.zip
+        asset_name: FACSPyUI_macos-latest.zip
+        asset_content_type: application/zip
