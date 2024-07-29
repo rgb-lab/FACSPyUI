@@ -99,18 +99,18 @@ class MenuBar(QMenuBar, FileHandler):
         gating_menu = self.addMenu("Gating")
         calculate_gate_freqs = QAction("Calculate gate frequencies...", self)
         calculate_gate_freqs.triggered.connect(self.calc_gate_freqs)
-        supervised_action = QAction("Supervised gating", self)
-        supervised_action.triggered.connect(self.supervised_gating)
-        unsupervised_action = QAction("Unsupervised gating", self)
-        unsupervised_action.triggered.connect(self.unsupervised_gating)
-        manual_action = QAction("Manual gating", self)
-        manual_action.triggered.connect(self.manual_gating)
+        # supervised_action = QAction("Supervised gating", self)
+        # supervised_action.triggered.connect(self.supervised_gating)
+        # unsupervised_action = QAction("Unsupervised gating", self)
+        # unsupervised_action.triggered.connect(self.unsupervised_gating)
+        # manual_action = QAction("Manual gating", self)
+        # manual_action.triggered.connect(self.manual_gating)
 
         gating_menu.addAction(calculate_gate_freqs)
-        gating_menu.addSeparator()
-        gating_menu.addAction(supervised_action)
-        gating_menu.addAction(unsupervised_action)
-        gating_menu.addAction(manual_action)
+        # gating_menu.addSeparator()
+        # gating_menu.addAction(supervised_action)
+        # gating_menu.addAction(unsupervised_action)
+        # gating_menu.addAction(manual_action)
 
         # Transformation menu
         transformation_menu = self.addMenu("Transformation")
@@ -183,15 +183,15 @@ class MenuBar(QMenuBar, FileHandler):
         clustering_menu.addAction(parc_action)
         clustering_menu.addAction(phenograph_action)
 
-        # Integration menu
-        integration_menu = self.addMenu("Integration")
-        scanorama_action = QAction("Run scanorama...", self)
-        scanorama_action.triggered.connect(self.scanorama)
-        harmony_action = QAction("Run harmony...", self)
-        harmony_action.triggered.connect(self.harmony)
+        # # Integration menu
+        # integration_menu = self.addMenu("Integration")
+        # scanorama_action = QAction("Run scanorama...", self)
+        # scanorama_action.triggered.connect(self.scanorama)
+        # harmony_action = QAction("Run harmony...", self)
+        # harmony_action.triggered.connect(self.harmony)
 
-        integration_menu.addAction(scanorama_action)
-        integration_menu.addAction(harmony_action)
+        # integration_menu.addAction(scanorama_action)
+        # integration_menu.addAction(harmony_action)
     
     def scanorama(self):
         current_selection = self.check_if_dataset_is_selected()
